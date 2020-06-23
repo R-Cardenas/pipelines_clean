@@ -1,5 +1,8 @@
 # UEA BCG pipelines
 
+![logo](misc/logo.png)
+
+
 <br />
 
 <!-- TABLE OF CONTENTS -->
@@ -32,7 +35,7 @@ Irrespective of the pipelines chosen, all workflows perform similar analyses:
 
 ### Quality Control
 
-The quality control pipeline contains a static backbone that is present with all data types (black). Dependent on the type of 
+The quality control pipeline contains a static backbone that is present with all data types (black). Dependent on the type of
 
 
 
