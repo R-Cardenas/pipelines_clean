@@ -1,4 +1,4 @@
-# UEA BCG pipelines
+# UEA BCRE pipelines
 
 ![logo](misc/logo.png)
 
@@ -11,6 +11,7 @@
 <br />
 
 * [Introduction](#Introduction)
+* [Quality Control](#Quality Control)
 
 <br />
 
