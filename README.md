@@ -11,7 +11,8 @@
 <br />
 
 * [Introduction](#Introduction)
-* [Quality Control](#Quality-Control)
+  - [Quality Control](#Quality-Control)
+  - [Pipelines](#Pipelines-available)
 
 <br />
 
@@ -36,11 +37,17 @@ Irrespective of the pipelines chosen, all workflows perform similar analyses:
 
 ### Quality Control
 
-The quality control pipeline contains a static backbone that is present with all data types (black). Dependent on the type of
+<br />
+
+The quality control pipeline contains a static backbone that is present with all data types (black). Dependent on the type of data used extra tools are added onto this backbone (shown in figure 2 below). Therefore, if you are planning to process exome dna-seq data for somatic mutations then you would select "exome-somatic_QC" in the config file so it know to include tools to measure hybridisation stats.
+
+<br />
+
+![figure-2](misc/figure2.png)
 
 
 
-### Quality Control
+### Pipelines available
 
 Current pipelines are able to process the following data input:
 
