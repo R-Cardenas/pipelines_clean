@@ -11,7 +11,7 @@
 <br />
 
 * [Introduction](#Introduction)
-* [Quality Control](#Quality Control)
+* [Quality Control](#Quality-Control)
 
 <br />
 
