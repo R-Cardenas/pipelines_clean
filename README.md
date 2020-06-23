@@ -44,7 +44,7 @@ The quality control pipeline contains a static backbone that is present with all
 <br />
 
 ![figure-2](misc/figure2.png)
- 
+
 
 
 ### Pipelines available
