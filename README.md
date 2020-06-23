@@ -14,6 +14,10 @@
   - [Quality Control](#Quality-Control)
   - [Pipelines](#Pipelines-available)
 
+* [Usage](#Usage)
+  - [Software Requirements](#Software-Requirements)
+  - [Example](#Example)
+
 <br />
 
 
@@ -49,7 +53,7 @@ The quality control pipeline contains a static backbone that is present with all
 
 ### Pipelines available
 
-Current pipelines are able to process the following data input:
+After alignment and QC, the following pipelines are available to process your samples. For more information about the steps involved in these - click on the links below.
 
 DNA-seq:
 
@@ -59,3 +63,18 @@ DNA-seq:
   - Whole-genome germline (Freebayes and GATK HaplotypeCaller)
   - Whole-genome somatic (Sanger-cgpWGS and GATK Mutect2)
   - Whole-genome structural variants (Sanger-XXX)
+
+
+RNA-seq:
+
+  - mRNA RNA-seq (Hisat2)
+
+
+
+## Usage
+
+
+### Software Requirements
+
+
+### Example
