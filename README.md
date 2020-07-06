@@ -82,6 +82,12 @@ As a mininum you will require the following dependencies:
   - git and git account
   - An account on the HPC..!!! you do it this way...??
 
+### Input names
+
+Currently, the pipeline can only receive fastq.gz input files and these require their names to be formatted to allow the pipeline to run smoothly. Below shows the correct format with an example:
+
+![figure-3](misc/figure3.png)
+
 
 ### Tutorial
 
@@ -96,4 +102,16 @@ git clone https://github.com/R-Cardenas/pipelines_clean.git
 This will download all the scripts in addition to some test data directly into the input folder so that the pipeline can be tested (The input folder is where your fastq files are to go also.)
 
 
-#### 2. Modify the config file
+#### 2. Modify the master config file file
+
+In the home directory of the repo there is a file called master_user_config.yaml. This the file you are to edit. Below is a simplified version of the config file:
+
+note: hpc 'no' has not yet been configured. Pipelines can only be run on the HPC for now.
+
+```
+samples: "dna-exome-germline"
+genome_assemble: "hg38"
+hpc: "yes"
+merged_lanes: "no"
+pipelines: "freebayes gatk_haplotypecaller"
+```
