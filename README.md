@@ -25,7 +25,7 @@
 
 <br />
 
-At UEA bob champion genomics we have developed a number of pipelines specialising for processing sequencing data. We have developed a system that allows the easy use of these pipelines by downloading the github repository, moving fastq files into input directory and configuring which analyses to perform by configuring the "XXX.config" file.
+At UEA bob champion genomics we have developed a number of pipelines specialising for processing sequencing data. We have developed a system that allows the easy use of these pipelines by downloading the github repository, moving fastq files into input directory and configuring which analyses to perform by configuring the "XXX.config" file. The pipeline has been written using the nextflow workflow management.
 
 <br />
 
@@ -70,11 +70,26 @@ RNA-seq:
   - mRNA RNA-seq (Hisat2)
 
 
-
 ## Usage
-
 
 ### Software Requirements
 
+As a mininum you will require the following dependencies:
 
-### Example
+  - Singularity (v3+)
+  - Nextflow (v19+)
+  - Python 3+
+  - An account on the HPC..!!! you do it this way...
+
+
+### Tutorial
+
+In order to test the pipeline download clone this repository to your working directory using:
+
+'''
+git clone https://github.com/R-Cardenas/pipelines_clean.git
+'''
+
+
+
+Plan - you will put fastq files into the input folder .. then play with the nextflow file. Then run start.py.

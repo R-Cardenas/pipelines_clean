@@ -1,0 +1,42 @@
+
+#    _    _   ______                 _____                                      _
+#   | |  | | |  ____|     /\        / ____|                                    (_)
+#   | |  | | | |__       /  \      | |  __    ___   _ __     ___    _ __ ___    _    ___   ___
+#   | |  | | |  __|     / /\ \     | | |_ |  / _ \ | '_ \   / _ \  | '_ ` _ \  | |  / __| / __|
+#   | |__| | | |____   / ____ \    | |__| | |  __/ | | | | | (_) | | | | | | | | | | (__  \__ \
+#    \____/  |______| /_/    \_\    \_____|  \___| |_| |_|  \___/  |_| |_| |_| |_|  \___| |___/
+
+
+# Master user config file v0.1
+# Creator: Ryan Cardenas
+# Email: aft19qdu@uea.ac.uk
+
+# Purpose: This config file chooses which pipelines are to be run and other details, such as which genome to use. It is important that the information given is accurate to ensure pipeline run correctly. Please read DOCUMENTATION before editing this file.
+
+# INFO: If multiple inputs required seperate by a single space e.g. 'freebayes gatk-haplotypecaller'
+
+################
+## USER INPUT ##
+################
+
+#1 What samples are these? (e.g. dna-exome-germline)
+
+samples: ''
+
+#2 What genome assembly to map to? (i.e. hg19 / hg38)
+
+genome_assemble: ''
+
+#3 Are the samples mapped on multiple lanes? (i.e. yes / no)
+
+merged_lanes: ''
+
+#4 Which pipelines would you like to include? (e.g. freebayes)
+
+pipelines: ''
+
+#5 Is this run on UEA HPC? (i.e. yes / no)
+
+# if no this will download all required genomes and singularity images to downloads (requires lots of space ~100 GB).
+
+hpc: ''
