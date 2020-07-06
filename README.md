@@ -79,17 +79,21 @@ As a mininum you will require the following dependencies:
   - Singularity (v3+)
   - Nextflow (v19+)
   - Python 3+
-  - An account on the HPC..!!! you do it this way...
+  - git and git account
+  - An account on the HPC..!!! you do it this way...??
 
 
 ### Tutorial
 
+#### 1. Download repo
+
 In order to test the pipeline download clone this repository to your working directory using:
 
-'''
+```
 git clone https://github.com/R-Cardenas/pipelines_clean.git
-'''
+```
+
+This will download all the scripts in addition to some test data directly into the input folder so that the pipeline can be tested (The input folder is where your fastq files are to go also.)
 
 
-
-Plan - you will put fastq files into the input folder .. then play with the nextflow file. Then run start.py.
+#### 2. Modify the config file
