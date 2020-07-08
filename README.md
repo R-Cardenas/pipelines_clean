@@ -78,9 +78,10 @@ As a mininum you will require the following dependencies:
 
   - Singularity (v3+)
   - Nextflow (v19+)
-  - Python 3+
+  - Python 3+ (with pyYAML)
   - git and git account
   - An account on the HPC..!!! you do it this way...??
+
 
 ### Input names
 
@@ -89,9 +90,15 @@ Currently, the pipeline can only receive fastq.gz input files and these require 
 ![figure-3](misc/figure3.png)
 
 
+The entries can be named anything, it is the dashes that are important to seperate these fields in the pipeline. Also, if there is one sample from different lanes, ensure that the sample field are the same in both.
+
+
+
 ### Tutorial
 
+
 #### 1. Download repo
+
 
 In order to test the pipeline download clone this repository to your working directory using:
 
@@ -102,11 +109,15 @@ git clone https://github.com/R-Cardenas/pipelines_clean.git
 This will download all the scripts in addition to some test data directly into the input folder so that the pipeline can be tested (The input folder is where your fastq files are to go also.)
 
 
+
 #### 2. Modify the master config file file
 
-In the home directory of the repo there is a file called master_user_config.yaml. This the file you are to edit. Below is a simplified version of the config file:
 
+In the home directory of the repo there is a file called master_user_config.yaml. This is the file you are to edit to configure the pipeline.
+
+Below is a simplified version of the config file:
 note: hpc 'no' has not yet been configured. Pipelines can only be run on the HPC for now.
+
 
 ```
 samples: "dna-exome-germline"

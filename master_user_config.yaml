@@ -21,22 +21,26 @@
 
 #1 What samples are these? (e.g. dna-exome-germline)
 
-samples: ''
+samples: 'dna-exome'
+
+#1 If DNA variant analysis is to be conducted are they germline / somatic? (for RNA just leave empty)
+
+variant: 'germline'
 
 #2 What genome assembly to map to? (i.e. hg19 / hg38)
 
-genome_assemble: ''
+genome_assembly: 'hg38'
 
 #3 Are the samples mapped on multiple lanes? (i.e. yes / no)
 
-merged_lanes: ''
+merged_lanes: 'yes'
 
 #4 Which pipelines would you like to include? (e.g. freebayes)
 
-pipelines: ''
+pipelines: 'freebayes'
 
 #5 Is this run on UEA HPC? (i.e. yes / no)
 
 # if no this will download all required genomes and singularity images to downloads (requires lots of space ~100 GB).
 
-hpc: ''
+hpc: 'no'

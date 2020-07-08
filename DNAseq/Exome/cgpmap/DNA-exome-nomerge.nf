@@ -335,7 +335,7 @@ workflow.onComplete {
 	 ' >> $baseDir/${projectname}_log.txt
 
 	 mail -s "cgpMAP successful" aft19qdu@uea.ac.uk < $baseDir/${projectname}_log.txt
-	 	mail -s "cgpMAP info" aft19qdu@uea.ac.uk < $baseDir/${projectname}_cgpmap_samples.log
+	 mail -s "cgpMAP info" aft19qdu@uea.ac.uk < $baseDir/${projectname}_cgpmap_samples.log
 	 """
 	}
 }
