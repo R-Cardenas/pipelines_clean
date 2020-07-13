@@ -19,6 +19,11 @@
 ## USER INPUT ##
 ################
 
+#1 Enter the project name. ## !! NEEDS ADDING !!!
+
+samples: 'Tumoroid'
+
+
 #1 What samples are these? (e.g. dna-exome-germline)
 
 samples: 'dna-exome'
@@ -44,3 +49,29 @@ pipelines: 'freebayes'
 # if no this will download all required genomes and singularity images to downloads (requires lots of space ~100 GB).
 
 hpc: 'no'
+
+
+##########################
+### Germline only ########
+##########################
+
+#1 Allele frequency group?? ## !! NEEDS ADDING !!! See (https://www.ensembl.org/info/docs/tools/vep/script/vep_options.html#opt_af_gnomad)
+
+af_gnomad: 'Tumoroid'
+
+#1 Allele frequency proportion?? ## !! NEEDS ADDING !!! (0.1 equal to occurence of 10% in population)
+
+af: '0.1'
+
+
+##########################
+### Somatic only ########
+##########################
+
+#1 Allele frequency proportion?? ## !! NEEDS ADDING !!!
+
+Tumour_samples: 'A_1, A_2'
+
+#1 Allele frequency proportion?? ## !! NEEDS ADDING !!!
+
+Normal_samples: 'A_1, A_2'

@@ -37,7 +37,7 @@ result = myLongCmdline.execute().text
 process trim_galore{
 	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
 	maxRetries 6
-	stageInMode = 'copy' // trim_galore doesnt like sym/hardlinks..
+	stageInMode = 'copy' // trim_galore doesnt like sym/hardlinks.
   storeDir "$baseDir/output/cgpMAP/trim_galore"
 	input:
 	tuple val(read2), file(reads) from read2_ch
