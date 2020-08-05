@@ -12,7 +12,7 @@ if data['merged_lanes'] == 'no':
 elif data['merged_lanes'] == 'yes':
     cgpmap_nf = "nextflow run DNAseq/Exome/cgpmap/dna-exome-merge.nf"
 else:
-    print('dna_exome.py - line16')
+    print('dna_exome.py - line10')
     raise SyntaxError("dna_exome.py: Incorrect 'merged_lanes' input. Please revise")
 
 # Select config files for hg19 or hg38
