@@ -12,7 +12,7 @@ except ImportError:
     from yaml import Loader, Dumper
 
 # Copy all nextflow to the workdir - as nextflow doesnt work...
-cp_nf = ['find','.','-name','"*.nf"','-exec','cp','{}','.','\\\;']
+cp_nf = ['find','.','-name','"*.nf"','-exec','cp','{}','.','\;']
 print(cp_nf)
 subprocess.Popen(cp_nf, stdout=subprocess.PIPE ).communicate()[0]
 
