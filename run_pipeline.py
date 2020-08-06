@@ -3,6 +3,7 @@
 # aft19qdu@uea.ac.uk
 import os
 import sys
+import subprocess
 sys.path.append("python_packages/pyyaml")
 import yaml
 from yaml import load, dump
@@ -10,11 +11,11 @@ try:
     from yaml import CLoader as Loader, CDumper as Dumper
 except ImportError:
     from yaml import Loader, Dumper
-
+from subprocess import Popen, PIPE,run
 
 
 ## Create a bash script that will run all the pipelines selected by the config
-
+run("pwd", capture_output=True).stdout
 os.system("rm -fr run_selected_pipeline.sh")
 os.system("echo '#!/bin/bash' >> run_selected_pipeline.sh") ## should this be bsub? or lsf?
 
