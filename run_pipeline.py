@@ -15,8 +15,10 @@ except ImportError:
 
 
 ## Create a bash script that will run all the pipelines selected by the config
-subprocess.Popen("rm -fr run_selected_pipeline.sh", stdout=subprocess.PIPE ).communicate()[0]
-subprocess.Popen("echo '#!/bin/bash' >> run_selected_pipeline.sh", stdout=subprocess.PIPE ).communicate()[0] ## should this be bsub? or lsf?
+rm_existing = ["rm","-fr","run_selected_pipeline.sh"]
+new_sh = ["echo", "'#!/bin/bash'",">>","run_selected_pipeline.sh"]
+subprocess.Popen(rm_existing, stdout=subprocess.PIPE ).communicate()[0]
+subprocess.Popen(new_sh, stdout=subprocess.PIPE ).communicate()[0] ## should this be bsub? or lsf?
 
 ## Open the user master yaml file
 with open('master_user_config.yaml') as f:
@@ -40,5 +42,6 @@ else:
 
 ### We will run whats in the run_selected_pipeline.sh once it is filled.
 
-output = subprocess.Popen("bash run_selected_pipeline.sh", stdout=subprocess.PIPE ).communicate()[0]
+run_master = ["bash","run_selected_pipeline.sh"]
+output = subprocess.Popen(run_master, stdout=subprocess.PIPE ).communicate()[0]
 print(output)
