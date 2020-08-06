@@ -11,11 +11,12 @@ try:
     from yaml import CLoader as Loader, CDumper as Dumper
 except ImportError:
     from yaml import Loader, Dumper
-from subprocess import Popen, PIPE,run
+
 
 
 ## Create a bash script that will run all the pipelines selected by the config
-run("pwd", capture_output=True).stdout
+output = subprocess.Popen("pwd", stdout=subprocess.PIPE ).communicate()[0]
+print(output)
 os.system("rm -fr run_selected_pipeline.sh")
 os.system("echo '#!/bin/bash' >> run_selected_pipeline.sh") ## should this be bsub? or lsf?
 
