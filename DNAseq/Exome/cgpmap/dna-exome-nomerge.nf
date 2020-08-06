@@ -44,7 +44,7 @@ process trim_galore{
 	output:
 	file "${reads[0].simpleName}.fq.gz" into (read5_ch, read7_ch)
 	file "${reads[1].simpleName}.fq.gz" into (read10_ch, read12_ch)
-	script:
+	script: {
 	"""
 	mkdir -p $baseDir/logs
 
