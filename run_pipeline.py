@@ -15,10 +15,8 @@ except ImportError:
 
 
 ## Create a bash script that will run all the pipelines selected by the config
-output = subprocess.Popen("pwd", stdout=subprocess.PIPE ).communicate()[0]
-print(output)
-os.system("rm -fr run_selected_pipeline.sh")
-os.system("echo '#!/bin/bash' >> run_selected_pipeline.sh") ## should this be bsub? or lsf?
+subprocess.Popen("rm -fr run_selected_pipeline.sh", stdout=subprocess.PIPE ).communicate()[0]
+subprocess.Popen("echo '#!/bin/bash' >> run_selected_pipeline.sh", stdout=subprocess.PIPE ).communicate()[0] ## should this be bsub? or lsf?
 
 ## Open the user master yaml file
 with open('master_user_config.yaml') as f:
@@ -42,4 +40,5 @@ else:
 
 ### We will run whats in the run_selected_pipeline.sh once it is filled.
 
-os.system("bash run_selected_pipeline.sh")
+output = subprocess.Popen("bash run_selected_pipeline.sh", stdout=subprocess.PIPE ).communicate()[0]
+print(output)
