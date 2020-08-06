@@ -3,7 +3,7 @@
 # aft19qdu@uea.ac.uk
 import os
 import sys
-sys.path.append("python_packages/pyyaml)
+sys.path.append("python_packages/pyyaml")
 import yaml
 
 
