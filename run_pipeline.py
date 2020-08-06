@@ -1,9 +1,11 @@
 # DESCRIPTION
 # RPC 080720
 # aft19qdu@uea.ac.uk
-
-import yaml
 import os
+import sys
+sys.path.append("python_packages/pyyaml)
+import yaml
+
 
 ## Create a bash script that will run all the pipelines selected by the config
 
