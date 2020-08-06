@@ -59,7 +59,7 @@ process trim_galore{
 	rm -fr ${reads[1]}
 	"""
 }
-
+}
 
 process fqtools{
 	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
