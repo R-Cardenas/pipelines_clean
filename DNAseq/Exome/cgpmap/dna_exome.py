@@ -6,15 +6,14 @@ import os
 # aft19qdu@uea.ac.uk
 from run_pipeline import data, home_dir
 
-print(os.getcwd())
 # Select merge or no merge nextflow
 if data['merged_lanes'] == 'no':
     cgpmap_nf = "nextflow run dna-exome-nomerge.nf"
-    cmd = "cp dna-exome-nomerge.nf " + home_dir
+    cmd = "cp DNAseq/Exome/dna-exome-nomerge.nf ."
     os.system(cmd)
 elif data['merged_lanes'] == 'yes':
     cgpmap_nf = "nextflow run dna-exome-merge.nf"
-    cmd = "cp dna-exome-merge.nf " + home_dir
+    cmd = "cp DNAseq/Exome/dna-exome-merge.nf ."
     os.system(cmd)
 else:
     print('dna_exome.py - line10')
