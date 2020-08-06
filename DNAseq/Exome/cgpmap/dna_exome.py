@@ -6,6 +6,7 @@ import os
 # aft19qdu@uea.ac.uk
 from run_pipeline import data, home_dir
 
+print(os.system())
 # Select merge or no merge nextflow
 if data['merged_lanes'] == 'no':
     cgpmap_nf = "nextflow run dna-exome-nomerge.nf"
