@@ -38,7 +38,7 @@ genome_assembly: 'hg38'
 
 #3 Are the samples mapped on multiple lanes? (i.e. yes / no)
 
-merged_lanes: 'yes'
+merged_lanes: 'no'
 
 #4 Which pipelines would you like to include? (e.g. freebayes)
 
