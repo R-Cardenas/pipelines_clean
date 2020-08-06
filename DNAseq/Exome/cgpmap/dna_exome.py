@@ -17,9 +17,9 @@ else:
 
 # Select config files for hg19 or hg38
 if data['genome_assembly'] == 'hg38':
-    cgpmap_config = "-c DNAseq/Exome/cgpmap/dna-exome_hg38.config"
+    cgpmap_config = "-c DNAseq/Exome/cgpmap/cgpmap_hg38.config"
 elif data['genome_assembly'] == 'hg19':
-    cgpmap_config = "-c DNAseq/Exome/cgpmap/dna-exome_hg19.config"
+    cgpmap_config = "-c DNAseq/Exome/cgpmap/cgpmap_hg19.config"
 else:
     print('dna_exome.py - line24')
     raise SyntaxError("dna_exome.py: Incorrect 'genome_assembly' input. Please revise")
