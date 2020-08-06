@@ -5,13 +5,18 @@ import os
 import sys
 sys.path.append("python_packages/pyyaml")
 import yaml
+from yaml import load, dump
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
+
 
 
 ## Create a bash script that will run all the pipelines selected by the config
 
 os.system("rm -fr run_selected_pipeline.sh")
 os.system("echo '#!/bin/bash' >> run_selected_pipeline.sh") ## should this be bsub? or lsf?
-
 
 ## Open the user master yaml file
 with open('master_user_config.yaml') as f:
@@ -31,6 +36,8 @@ elif data['samples'] == 'rna-seq':
 else:
     raise SyntaxError('incorrect "samples" values input in master_user_config.yaml')
 
-### Remember to includeconfig user.config.. hopefully more than 1 is allowed...
+### Remember to includeconfig user.config..
 
 ### We will run whats in the run_selected_pipeline.sh once it is filled.
+
+os.system("bash run_selected_pipeline.sh")
