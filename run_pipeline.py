@@ -21,7 +21,7 @@ os.system("echo '#!/bin/bash' >> run_selected_pipeline.sh") ## should this be bs
 ## Open the user master yaml file
 with open('master_user_config.yaml') as f:
 
-    data = yaml.load(f,Loader=yaml.FullLoader)
+    data = yaml.load(f,Loader=Loader)
 
 ## Extract data relevant to pipeline one and write the bash script.
 
