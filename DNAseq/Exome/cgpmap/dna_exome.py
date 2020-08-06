@@ -8,9 +8,9 @@ from run_pipeline import data
 
 # Select merge or no merge nextflow
 if data['merged_lanes'] == 'no':
-    cgpmap_nf = "nextflow run DNAseq/Exome/cgpmap/dna-exome-nomerge.nf"
+    cgpmap_nf = "nextflow run dna-exome-nomerge.nf"
 elif data['merged_lanes'] == 'yes':
-    cgpmap_nf = "nextflow run DNAseq/Exome/cgpmap/dna-exome-merge.nf"
+    cgpmap_nf = "nextflow run dna-exome-merge.nf"
 else:
     print('dna_exome.py - line10')
     raise SyntaxError("dna_exome.py: Incorrect 'merged_lanes' input. Please revise")
