@@ -12,12 +12,17 @@ except ImportError:
     from yaml import Loader, Dumper
 
 # Copy all nextflow to the workdir - as nextflow doesnt work...
-cp_nf = "find . -name '*.nf' -exec cp {} . \;"
-os.system(cp_nf)
+
+
+workdir = os.getcwd()
+print(workdir)
+cp_nf = "find " + workdir + " -name '*.nf' -exec cp {} " + workdir + " \;"
+print(cp_nf)
+#os.system(cp_nf)
 
 ## Create a bash script that will run all the pipelines selected by the config
-rm_existing = ["rm -fr run_selected_pipeline.sh"]
-new_sh = ["echo '#!/bin/bash' >> run_selected_pipeline.sh"]
+rm_existing = "rm -fr run_selected_pipeline.sh"
+new_sh = "echo '#!/bin/bash' >> run_selected_pipeline.sh"
 
 os.system(rm_existing) ## should this be bsub? or lsf?
 os.system(new_sh)
@@ -48,5 +53,5 @@ output = subprocess.Popen(run_master, stdout=subprocess.PIPE ).communicate()[0]
 print(output)
 
 ## Remove the nextflow files that were copied to keep clean
-cp_nf = ['rm -fr *.nf']
+cp_nf = 'rm -fr *.nf'
 os.system(cp_nf)
