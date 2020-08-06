@@ -339,19 +339,3 @@ workflow.onComplete {
 	 """
 	}
 }
-
-workflow.onError {
-	process finish_error{
-		script:
-		"""
-		echo 'Pipeline cgpmap v0.3 FAILED
-		Project: $projectname
-		Time: ${nextflow.timestamp}
-
-		Error:
-		${workflow.errorMessage}' >> $baseDir/${projectname}_error.txt
-
-	  mail -s "cgpMAP successful" aft19qdu@uea.ac.uk < $baseDir/${projectname}_error.txt
-	  """
-	}
-}
