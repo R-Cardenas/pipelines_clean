@@ -5,11 +5,11 @@ import os
 import sys
 import subprocess
 sys.path.append("python-packages/pyyaml")
-import yaml
+import pyyaml
 try:
-    from yaml import CLoader as Loader, CDumper as Dumper
+    from pyyaml import CLoader as Loader, CDumper as Dumper
 except ImportError:
-    from yaml import Loader, Dumper
+    from pyyaml import Loader, Dumper
 
 home_dir = os.getcwd()
 
