@@ -5,11 +5,11 @@ import os
 import sys
 import subprocess
 sys.path.append("python-packages/pyyaml")
-import pyyaml
+import yaml
 try:
-    from pyyaml import CLoader as Loader, CDumper as Dumper
+    from yaml import CLoader as Loader, CDumper as Dumper
 except ImportError:
-    from pyyaml import Loader, Dumper
+    from yaml import Loader, Dumper
 
 home_dir = os.getcwd()
 
@@ -26,7 +26,15 @@ with open('master_user_config.yaml') as f:
     data = yaml.load(f,Loader=Loader)
 
 ## Extract data relevant to pipeline one and write the bash script.
-# import python scripts based on samples input from YAML
+
+
+projectname = data['projectname'] # extract the projects name
+projectname2 = 'env.projectname = "' + projectname + '"'
+print("Project name is: " + projectname2)
+add_projectname = f"""for f in $(find . -name '*config'); do echo 'env.projectname={projectname2}' >> $f; done""" # add projectname to all config files
+os.system(add_projectname)
+
+# The next chunk identifies data type and then imports the python script specific for the datatype e.g. exome
 
 if data['samples'] == 'dna-exome':
     from DNAseq.Exome.cgpmap.dna_exome import *

@@ -21,30 +21,30 @@
 
 #1 Enter the project name. (e.g. Project1)
 
-samples: 'Tumoroid'
+projectname: 'Tumoroid'
 
 
-#1 What samples are these? (e.g. dna-exome-germline)
+#2 What samples are these? (e.g. dna-exome-germline)
 
 samples: 'dna-exome'
 
-#1 If DNA variant analysis is to be conducted are they germline / somatic? (for RNA just leave empty)
+#3 If DNA variant analysis is to be conducted are they germline / somatic? (for RNA just leave empty)
 
 variant: 'germline'
 
-#2 What genome assembly to map to? (i.e. hg19 / hg38)
+#4 What genome assembly to map to? (i.e. hg19 / hg38)
 
 genome_assembly: 'hg38'
 
-#3 Are the samples mapped on multiple lanes? (i.e. yes / no)
+#5 Are the samples mapped on multiple lanes? (i.e. yes / no)
 
 merged_lanes: 'no'
 
-#4 Which pipelines would you like to include? (e.g. freebayes)
+#6 Which pipelines would you like to include? (e.g. freebayes)
 
 pipelines: 'freebayes'
 
-#5 Is this run on UEA HPC? (i.e. yes / no)
+#7 Is this run on UEA HPC? (i.e. yes / no)
 
 # if no this will download all required genomes and singularity images to downloads (requires lots of space ~100 GB).
 
@@ -55,11 +55,11 @@ hpc: 'no'
 ### Germline only ########
 ##########################
 
-#1 Allele frequency group?? ## !! NEEDS ADDING !!! See (https://www.ensembl.org/info/docs/tools/vep/script/vep_options.html#opt_af_gnomad)
+#8 Allele frequency group?? ## !! NEEDS ADDING !!! See (https://www.ensembl.org/info/docs/tools/vep/script/vep_options.html#opt_af_gnomad)
 
 af_gnomad: 'Tumoroid'
 
-#1 Allele frequency proportion?? ## !! NEEDS ADDING !!! (0.1 equal to occurence of 10% in population)
+#9 Allele frequency proportion?? ## !! NEEDS ADDING !!! (0.1 equal to occurence of 10% in population)
 
 af: '0.1'
 
