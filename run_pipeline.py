@@ -37,7 +37,7 @@ elif data['samples'] == 'rna-seq':
 else:
     raise SyntaxError('incorrect "samples" values input in master_user_config.yaml')
 
-### Remember to includeconfig user.config..
+## Remember to includeconfig user.config..
 
 ### We will run whats in the run_selected_pipeline.sh once it is filled.
 
