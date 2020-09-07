@@ -4,7 +4,7 @@
 import os
 import sys
 import subprocess
-sys.path.append("python_packages/pyyaml")
+sys.path.append("python-packages/pyyaml")
 import yaml
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
