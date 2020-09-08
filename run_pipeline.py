@@ -17,7 +17,7 @@ home_dir = os.getcwd()
 rm_existing = "rm -fr run_selected_pipeline.sh"
 new_sh = "echo '#!/bin/bash' >> run_selected_pipeline.sh"
 
-os.system(rm_existing) ## should this be bsub? or lsf?
+os.system(rm_existing) ## should this be bsub? or slurm?
 os.system(new_sh)
 
 ## Open the user master yaml file
