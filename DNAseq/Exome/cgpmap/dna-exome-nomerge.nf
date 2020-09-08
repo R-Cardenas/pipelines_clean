@@ -318,8 +318,6 @@ workflow.onComplete {
 		Time: ${nextflow.timestamp}
 
 	 trimmomatic - completed
-	 (adapter1: $adapter1
-		adapter2: $adapter2)
 	 cgpmap - completed
 	 (reference = $cgpmap_genome)
 	 (index = $cgpmap_index)
