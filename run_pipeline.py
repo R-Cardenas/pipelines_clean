@@ -31,6 +31,7 @@ with open('master_user_config.yaml') as f:
 projectname = data['projectname'] # extract the projects name
 projectname2 = 'env.projectname = "' + projectname + '"'
 print("Project name is: " + projectname2)
+## Below line requires python >3.6
 add_projectname = f"""for f in $(find . -name '*config'); do echo 'env.projectname={projectname2}' >> $f; done""" # add projectname to all config files
 os.system(add_projectname)
 
