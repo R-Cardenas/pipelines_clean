@@ -42,9 +42,9 @@ process trim_galore{
 	input:
 	tuple val(read2), file(reads) from read2_ch
 	output:
-	file "${reads[0].simpleName}_val_1.fq.gz" into (read5_ch, read7_ch)
-	file "${reads[1].simpleName}_val_2.fq.gz" into (read10_ch, read12_ch)
-	file "*.html"
+	file "${reads[0].simpleName}_1.trim.fq.gz" into (read5_ch, read7_ch)
+	file "${reads[1].simpleName}_2.trim.fq.gz" into (read10_ch, read12_ch)
+	file("*.html") optional true
 	script: {
 	"""
 	mkdir -p $baseDir/logs
@@ -53,11 +53,15 @@ process trim_galore{
 	--fastqc --illumina \
 	${reads[0]} ${reads[1]}
 
+	mv ${reads[0].simpleName}_val_1.fq.gz ${reads[0].simpleName}_1.trim.fq.gz
+	mv ${reads[1].simpleName}_val_2.fq.gz ${reads[1].simpleName}_2.trim.fq.gz
+
 	rm -fr ${reads[0]} # remove the copied files to prevent memory loss
 	rm -fr ${reads[1]}
 	"""
 }
 }
+
 
 process fqtools{
 	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
