@@ -75,8 +75,8 @@ else:
 if data['samples'] == 'dna-exome' and data['variant'] == 'germline':
     variant_nf = "nextflow run freebayes_individual.nf & \"" \
                  "nextflow run haplotypecaller_individual.nf"
-    cmd1 = "cp DNAseq/Exome/germline/freebayes_individual.nf ."
-    cmd2 = "cp DNAseq/Exome/germline/haplotypecaller_individual.nf ."
+    cmd1 = "cp DNAseq/Exome/germline/freebayes/freebayes_individual.nf ."
+    cmd2 = "cp DNAseq/Exome/germline/gatk/haplotypecaller_individual.nf ."
     os.system(cmd1)
     os.system(cmd2)
 elif data['samples'] == 'dna-exome' and data['variant'] == 'somatic':
