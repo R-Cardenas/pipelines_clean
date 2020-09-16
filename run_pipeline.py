@@ -90,7 +90,7 @@ else:
     raise SyntaxError('incorrect "variant" values input in master_user_config.yaml')
 
 ### Concat nextflow run and config into bash script in repo home Dir
-variant_bash2 = "echo '" + variant_nf + "' >> run_selected_pipeline.sh"
+cgpmap_bash2 = "echo '" + variant_nf + "' >> run_selected_pipeline.sh"
 print(cgpmap_bash2)
 os.system(cgpmap_bash2)
 
