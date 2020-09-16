@@ -98,7 +98,7 @@ process fqtools{
 	echo 'alls good!'
 	fi
 
-	cp *WARNING* $baseDir/logs
+	cp *WARNING* $baseDir/logs 2>/dev/null || :
 	python $baseDir/nextflow_pipelines/bin/python/fastq2config_cgpmap.py \
 	--fq1 ${read1.simpleName}.txt --fq2 ${read2.simpleName}.txt \
 	--n1 ${read1} --n2 ${read2} --o ${read1}.yaml
@@ -125,7 +125,7 @@ process cgpMAP {
   -r $cgpmap_genome \
   -i $cgpmap_index \
   -s \$name \
-  -t 5 \
+  -t 1 \
 	-g ${read1}.yaml \
   ${read1} ${read2}
 
@@ -224,11 +224,25 @@ process hybrid_stats {
   file "${bam.simpleName}_hs_metrics.txt"
   script:
   """
+
+	# create interval files from BED supplied
+	picard BedToIntervalList \
+	I=${bait_interval} \
+	O=${bait_interval}.interval \
+	SD=$genome_fasta
+
+	picard BedToIntervalList \
+	I=${target_interval} \
+	O=${target_interval}.interval \
+	SD=$genome_fasta
+
+
+	# perform hybrid stats
 	mkdir -p tmp
   picard CollectHsMetrics I=${bam} O=${bam.simpleName}_hs_metrics.txt \
   R=$genome_fasta \
-  BAIT_INTERVALS=$bait_interval \
-  TARGET_INTERVALS=$target_interval \
+  BAIT_INTERVALS=${bait_interval}.interval \
+  TARGET_INTERVALS=${target_interval}.interval \
 	TMP_DIR=tmp
 	rm -fr tmp
   """

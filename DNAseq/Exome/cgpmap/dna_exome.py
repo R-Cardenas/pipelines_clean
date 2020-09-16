@@ -5,6 +5,25 @@ import os
 # RPC 080720
 # aft19qdu@uea.ac.uk
 from run_pipeline import data, home_dir
+import glob
+
+################
+## check BAIT ##
+################
+
+print("Checking for interval files...")
+interval_files = glob.glob('input/bait/*.bed')
+if interval_files == 0:
+    raise SyntaxError("No bed files found in input/bait .. Exome-seq analysis requires these file.")
+elif interval_files == 1:
+    raise SyntaxError("Only 1 bed file found in input/bait .. Both target and bait files required")
+else:
+    print("Found the following bed files in input/bait folder:")
+    print(interval_files)
+
+#################
+## MERGE LANES ##
+#################
 
 # Select merge or no merge nextflow
 if data['merged_lanes'] == 'no':
@@ -18,6 +37,10 @@ elif data['merged_lanes'] == 'yes':
 else:
     print('dna_exome.py - line10')
     raise SyntaxError("dna_exome.py: Incorrect 'merged_lanes' input. Please revise")
+
+###################
+## Genome Config ##
+###################
 
 # Select config files for hg19 or hg38
 if data['genome_assembly'] == 'hg38':

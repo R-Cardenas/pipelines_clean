@@ -70,8 +70,20 @@ af: '0.1'
 
 #1 Allele frequency proportion?? ## !! NEEDS ADDING !!!
 
+# Below enter the normal and tumor samples, as they should be patient matched for this analysis, ensure that the order for tumor and normal are the same.
+
 Tumour_samples: 'A_1, A_2'
-
-#1 Allele frequency proportion?? ## !! NEEDS ADDING !!!
-
 Normal_samples: 'A_1, A_2'
+
+
+##########################
+### Exome only ########
+##########################
+
+# What is filename for the bait bed file?
+
+bait_file: 'agilent_v0.1_hg38_bait.bed'
+
+# What is filename for the target bed file?
+
+target_file: 'agilent_v0.1_hg38_target.bed'
