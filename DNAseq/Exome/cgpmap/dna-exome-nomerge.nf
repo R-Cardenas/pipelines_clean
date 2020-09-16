@@ -35,8 +35,8 @@ result = myLongCmdline.execute().text
 
 
 process trim_galore{
-	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-	maxRetries 6
+
+
 	stageInMode = 'copy' // trim_galore doesnt like sym/hardlinks.
   storeDir "$baseDir/output/cgpMAP/trim_galore"
 	input:
@@ -64,8 +64,8 @@ process trim_galore{
 
 
 process fqtools{
-	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-	maxRetries 6
+
+
   storeDir "$baseDir/output/cgpMAP/trim_galore"
 	input:
 	file read1 from read7_ch
@@ -106,8 +106,8 @@ process fqtools{
 }
 
 process cgpMAP {
-  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-	maxRetries 6
+
+
 	storeDir "$baseDir/output/cgpMAP/${read1.simpleName}"
   input:
 	val read1 from read5_ch
@@ -140,8 +140,8 @@ process cgpMAP {
 
 
 process sam_sort {
-	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-	maxRetries 6
+
+
   storeDir "$baseDir/output/BAM/sorted"
   input:
   file bam from cgp_ch
@@ -158,8 +158,8 @@ process sam_sort {
 
 
 process picard_pcr_removal {
-	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-	maxRetries 6
+
+
 	storeDir "$baseDir/output/BAM/merged_lanes"
   input:
   file bam from dup_ch.flatten()
@@ -176,8 +176,8 @@ process picard_pcr_removal {
 }
 
 process bam_index {
-	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-	maxRetries 6
+
+
 	storeDir "$baseDir/output/BAM/merged_lanes"
   input:
   file bam from index1_ch
@@ -196,8 +196,8 @@ process bam_index {
 }
 
 process collect_insert_size {
-	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-	maxRetries 6
+
+
 	storeDir "$baseDir/output/BAM/insert_size"
   input:
   file bam from index_2ch
@@ -215,8 +215,8 @@ process collect_insert_size {
 }
 
 process hybrid_stats {
-	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-	maxRetries 6
+
+
 	storeDir "$baseDir/output/BAM/hybrid_stats"
   input:
   file bam from hs_ch
@@ -249,8 +249,8 @@ process hybrid_stats {
 }
 
 process alignment_stats{
-	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-	maxRetries 6
+
+
 	storeDir "$baseDir/output/BAM/alignment_stats"
 	input:
 	file bam from bam10_ch
@@ -269,8 +269,8 @@ process alignment_stats{
 }
 
 process verifybamid{
-	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-	maxRetries 6
+
+
 	storeDir "$baseDir/output/BAM/verifyBamID"
 	input:
 	file bam from bam11_ch
@@ -295,8 +295,8 @@ process verifybamid{
 
 
 process somalier{
-	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-	maxRetries 6
+
+
   storeDir "$baseDir/output/BAM/somalier"
   input:
   file bam from bam12_ch.collect()
