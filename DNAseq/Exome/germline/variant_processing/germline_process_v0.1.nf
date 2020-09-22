@@ -6,8 +6,8 @@ vcf_ch.into { vcf1_ch; vcf2_ch }
 
 // use pipeline bundle 1 has python3 installed
 process merge_caller_indels {
-  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-  maxRetries 6
+
+
   storeDir "$baseDir/output/VCF_collect/caller_merged"
   input:
   file vcf from vcf2_ch.collect()
@@ -15,13 +15,13 @@ process merge_caller_indels {
   file "*indels.merged.vcf" into indels_filter_ch
   script:
   """
-  python bin/python/merge_caller_indel.py --bam $vcf
+  python $baseDir/bin/python/merge_caller_indel.py --bam '$vcf'
   """
 }
 
 process indels_filter {
-  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-  maxRetries 6
+
+
   storeDir "$baseDir/output/VCF_collect/caller_merged"
   input:
   file vcf from indels_filter_ch.flatten()
@@ -34,8 +34,8 @@ process indels_filter {
 }
 
 process indels_sort {
-  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-  maxRetries 6
+
+
   storeDir "$baseDir/output/VCF_collect/caller_merged"
   input:
   file vcf from indels_sort_ch
@@ -53,8 +53,8 @@ process indels_sort {
 // dir needs to be changed
 // and VEP_fasta added
 process VEP2 {
-  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-  maxRetries 6
+
+
   storeDir "$baseDir/output/VCF_collect/caller_merged/VEP"
   input:
   file vcf from vep3_ch
@@ -100,8 +100,8 @@ process vep_header {
 // and VEP_fasta added
 // use pipeline bundle 1 has python3 installed
 process merge_caller_snps {
-  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-  maxRetries 6
+
+
   storeDir "$baseDir/output/VCF_collect/caller_merged"
   input:
   file vcf from vcf1_ch.collect()
@@ -109,13 +109,13 @@ process merge_caller_snps {
   file "*snps.merged.vcf" into snps_filter_ch
   script:
   """
-  python bin/python/merge_caller_snps.py --bam $vcf
+  python $baseDir/bin/python/merge_caller_snps.py --bam '$vcf'
   """
 }
 
 process snps_filter {
-  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-  maxRetries 6
+
+
   storeDir "$baseDir/output/VCF_collect/caller_merged"
   input:
   file vcf from snps_filter_ch.flatten()
@@ -128,8 +128,8 @@ process snps_filter {
 }
 
 process snps_sort {
-  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-  maxRetries 6
+
+
   storeDir "$baseDir/output/VCF_collect/caller_merged"
   input:
   file vcf from snps_sort_ch
@@ -148,8 +148,8 @@ process snps_sort {
 // dir needs to be changed
 // and VEP_fasta added
 process VEP3 {
-  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-  maxRetries 6
+
+
   storeDir "$baseDir/output/VCF_collect/caller_merged/VEP"
   input:
   file vcf from vep_ch

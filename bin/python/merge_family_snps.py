@@ -9,10 +9,19 @@ import subprocess
 #files = 'sample1-fam1-GATK.vcf.gz sample1-fam1-freebayes.vcf.gz'
 
 
-# Split the input from nextflow
+#############
+# ARG PARSE #
+#############
+
+# Split the input from nextflow (space delim)
 parser = argparse.ArgumentParser()
-files = parser.add_argument('--bam', required=True)
+parser.add_argument('--bam', required=True)
+
+args = parser.parse_args()
+files = args.bam
 files2 = files.split(" ")
+
+
 
 # Extract samples names from each input and create unique list
 bam_samples = list()
