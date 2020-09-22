@@ -147,7 +147,7 @@ process snps_sort {
 
 // dir needs to be changed
 // and VEP_fasta added
-process VEP2 {
+process VEP3 {
   errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
   maxRetries 6
   storeDir "$baseDir/output/VCF_collect/caller_merged/VEP"
@@ -178,7 +178,7 @@ process VEP2 {
   """
 }
 
-process vep_header {
+process vep_header2 {
   storeDir "$baseDir/output/VCF_collect/caller_merged/VEP"
   input:
   file txt from vep2_ch
