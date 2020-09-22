@@ -5,6 +5,7 @@
  */
 params.bam = "$baseDir/output/BAM/merged_lanes/*.rmd.bam"
 
+
 Channel
 	.fromPath( params.bam )
 	.set {bam_ch}
@@ -63,13 +64,13 @@ process zip {
 	input:
 	file zip from zip2_ch
 	output:
-	file "${zip}.freebayes.gz" into merge_ch
+	file "${zip}.freebayes.vcf.gz" into merge_ch
 	file "${zip.}.gz.tbi" into csi_ch
 	script:
 	"""
 	bgzip ${zip}
-	mv ${zip}.gz ${zip}.freebayes.gz
-	bcftools index -t ${zip}.freebayes.gz
+	mv ${zip}.gz ${zip}.freebayes.vcf.gz
+	bcftools index -t ${zip}.freebayes.vcf.gz
 	"""
 }
 

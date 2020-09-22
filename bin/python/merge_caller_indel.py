@@ -49,7 +49,7 @@ for f in unique:
     regex = re.compile(fr'{f}')
     selected_files = list(filter(regex.search, files2))
 
-    file = pathlib.Path(f'{f}_intersect.vcf')
+    file = pathlib.Path(f'{f}.indels.merged.vcf')
     print(f)
 
     if len(selected_files) == 0:
@@ -63,7 +63,7 @@ for f in unique:
         -a {selected_files[0]} \
         -b {selected_files[1]} \
         -f 0.10 -F 0.10 -wa -header \
-        > {f}_intersect.vcf """
+        > {f}.indels.merged.vcf """
         print(cmd)
         os.system(cmd)
 
@@ -75,10 +75,10 @@ for f in unique:
                 for z in range(2,len(selected_files)): # notice that '-a' is now the first intersection line 59-67
                     cmd = f"""
                     bedtools intersect \
-                    -a {f}_intersect.vcf \
+                    -a {f}.indels.merged.vcf \
                     -b {selected_files[z]} \
                     -f 0.10 -F 0.10 -wa -header \
-                    > {f}_intersect.vcf """
+                    > {f}.indels.merged.vcf """
                     print(cmd)
                     os.system(cmd)
             else:
@@ -87,7 +87,7 @@ for f in unique:
                 -a {selected_files[0]} \
                 -b {selected_files[1]} \
                 -f 0.10 -F 0.10 -wa -header \
-                > {f}_intersect.vcf """
+                > {f}.indels.merged.vcf """
                 print(cmd)
                 os.system(cmd)
                 loop1()
