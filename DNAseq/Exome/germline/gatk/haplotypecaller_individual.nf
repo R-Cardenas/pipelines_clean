@@ -25,7 +25,7 @@ println """\
 process BaseRecalibrator {
 	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
 	maxRetries 6
-  storeDir "$baseDir/output/GATK_germline_single/haplotypeCaller"
+  storeDir "$baseDir/output/GATK_haplotypeCaller"
   input:
   file bam from bam_ch
   output:
@@ -58,7 +58,7 @@ process BaseRecalibrator {
 process haplotypeCaller {
 	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
 	maxRetries 6
-  storeDir "$baseDir/output/GATK_germline_single/haplotypeCaller"
+  storeDir "$baseDir/output/GATK_haplotypeCaller"
   input:
 	file bam from haplotype_bam_ch
   output:
@@ -87,11 +87,11 @@ process haplotypeCaller {
 
 
 process CNNscoreVariants {
-  storeDir "$baseDir/output/GATK_germline_single/haplotypeCaller"
+  storeDir "$baseDir/output/GATK_haplotypeCaller"
   input:
   file vcf from haplotype2_ch
   output:
-  file "${vcf.simpleName}_CNN.g.vcf.gz" into filterVCF_ch
+  file "${vcf.simpleName}.CNN.g.vcf.gz" into filterVCF_ch
   script:
   """
 	mkdir -p tmp
@@ -102,17 +102,17 @@ process CNNscoreVariants {
   gatk CNNScoreVariants \
   -V ${vcf} \
   -R $genome_fasta \
-	-O ${vcf.simpleName}_CNN.g.vcf.gz \
+	-O ${vcf.simpleName}.CNN.g.vcf.gz \
 	--tmp-dir tmp
 	"""
 }
 
 process FilterVariantTranches {
-  storeDir "$baseDir/output/GATK_germline_single/haplotypeCaller"
+  storeDir "$baseDir/output/GATK_haplotypeCaller"
 	input:
 	file vcf from filterVCF_ch
 	output:
-	file "${vcf.simpleName}_filtered.g.vcf" into zip_ch
+	file "${vcf.simpleName}.GATK.vcf" into zip_ch
 	script:
 	"""
 	mkdir -p tmp
@@ -129,62 +129,24 @@ process FilterVariantTranches {
 	--resource $GATK_hapmap \
 	--snp-tranche 99.95 \
 	--indel-tranche 99.4 \
-	-O ${vcf.simpleName}_filtered.g.vcf \
+	-O ${vcf.simpleName}.GATK.vcf \
 	--tmp-dir tmp
 	"""
 }
 
 // needs samttools
 process zip {
-  storeDir "$baseDir/output/GATK_germline_single/haplotypeCaller"
+  storeDir "$baseDir/output/VCF_collect"
 	input:
 	file zip from zip_ch
 	output:
-	file "${zip}.gz" into merge2_ch
-	file "${zip}.gz.csi" into merge3_ch
+	file "${zip.simpleName}.GATK.vcf.gz" into merge2_ch
+	file "${zip.simpleName}.GATK.vcf.gz.csi" into merge3_ch
 	script:
 	"""
 	bgzip ${zip}
-	bcftools index ${zip}.gz
-	"""
-}
-
-// use bcftools which one?? normal conda version
-process merge_vcf {
-  storeDir "$baseDir/output/GATK_germline_single/haplotypeCaller"
-	input:
-	file vcf2 from merge2_ch.collect()
-	file index2 from merge3_ch.collect()
-	output:
-	file "${projectname}_GATK_single_v0.2_filtered.vcf.gz" into collect_ch
-	script:
-	"""
-	bcftools merge -m all ${vcf2} -O z -o ${projectname}_GATK_single_v0.2_filtered.vcf.gz
-	"""
-}
-
-process collect_vcf {
-	storeDir "$baseDir/output/VCF_collect"
-	input:
-	file zip2 from collect_ch
-	output:
-	file "${projectname}_GATK_single_v0.2_filtered.vcf.gz" into index101_ch
-	script:
-	"""
-	cp ${zip2} $baseDir/output/VCF_collect/${projectname}_GATK_single_v0.2_filtered.vcf.gz
-	"""
-}
-
-//needs bcftools
-process bcf_index {
-	storeDir "$baseDir/output/VCF_collect"
-	input:
-	file vcf from index101_ch
-	output:
-	file "${vcf}.csi"
-	script:
-	"""
-	bcftools index ${vcf}
+	mv ${zip}.gz ${zip.simpleName}.GATK.vcf.gz
+	bcftools index ${zip.simpleName}.GATK.vcf.gz.csi
 	"""
 }
 

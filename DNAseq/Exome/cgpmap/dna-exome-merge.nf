@@ -59,7 +59,7 @@ process trim_galore{
 	rm -fr ${reads[0]} # remove the copied files to prevent memory loss
 	rm -fr ${reads[1]}
 	"""
-}
+}	
 }
 
 
@@ -146,7 +146,7 @@ process sam_sort {
   input:
   file bam from cgp_ch
   output:
-  file "${bam.simpleName}.sorted.bam" into dup_ch
+  file "${bam.simpleName}.sorted.bam" into bam_merge_ch
   script:
   """
 	mkdir -p tmp
@@ -156,6 +156,18 @@ process sam_sort {
   """
 }
 
+// dont forget to add singularity with python3 installed
+process bam_merge {
+  storeDir "$baseDir/output/BAM/sorted"
+  input:
+  file bam from bam_merge_ch.collect()
+  output:
+	file "*_merged.bam" into dup_ch
+  script:
+  """
+	python /misc/merge_bam.py --bam $bam
+  """
+}
 
 process picard_pcr_removal {
 
@@ -182,7 +194,7 @@ process bam_index {
   input:
   file bam from index1_ch
   output:
-  file "*.bai"
+  file "${bam}.bai" into (index_3ch, index_4ch)
 
   script:
   """
@@ -256,24 +268,21 @@ process verifybamid{
 	storeDir "$baseDir/output/BAM/verifyBamID"
 	input:
 	file bam from bam11_ch
+	file idx from index_3ch.collect()
 	output:
+	file "*.depthRG"
+	file "*.depthSM"
+	file "*.log"
+	file "*.selfRG"
 	file "*.selfSM"
 	script:
 	"""
-	mkdir -p tmp
-	picard BuildBamIndex \
-	I=${bam} \
-	O=${bam.simpleName}.rmd.bai \
-	TMP_DIR=tmp
-	rm -fr tmp
-
 	verifyBamID --vcf $verifybamid \
 	--bam ${bam} \
 	--out ${bam.simpleName} \
 	--maxDepth 1000 \
 	--precise \
-	--verbose \
-	--ignoreRG
+	--verbose
 
 	rm -fr *.bam
 	"""
@@ -287,14 +296,11 @@ process somalier{
   storeDir "$baseDir/output/BAM/somalier"
   input:
   file bam from bam12_ch.collect()
+	file idx from index_4ch.collect()
   output:
 	file "*.html"
   script:
   """
-	for f in *.bam; do
-		samtools index -b \$f
-	done
-
 	mkdir -p bin
 	wget -P bin/ https://github.com/brentp/somalier/files/3412456/sites.hg38.vcf.gz
 
