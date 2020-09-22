@@ -40,7 +40,7 @@ for i in unique:
     sample = list[1]
 
     # count how many files to merge
-    sample_wild = sample + '*'
+    sample_wild = sample + '*.gz'
     cmd_count = 'ls -l ' + sample_wild + ' | wc -l'
     count = subprocess.run([cmd_count], stdout=subprocess.PIPE, shell = True)
     count_number = str(int(count.stdout))

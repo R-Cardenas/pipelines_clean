@@ -15,6 +15,10 @@ process merge_caller_indels {
   file "*indels.merged.vcf" into indels_filter_ch
   script:
   """
+  for file in *.vcf*; do
+    bcftools index \$file
+  done
+
   python $baseDir/bin/python/merge_caller_indel.py --bam '$vcf'
   """
 }
@@ -109,6 +113,10 @@ process merge_caller_snps {
   file "*snps.merged.vcf" into snps_filter_ch
   script:
   """
+  for file in *.vcf*; do
+    bcftools index \$file
+  done
+  
   python $baseDir/bin/python/merge_caller_snps.py --bam '$vcf'
   """
 }
