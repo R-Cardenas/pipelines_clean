@@ -116,8 +116,13 @@ process merge_caller_snps {
   for file in *.vcf*; do
     bcftools index \$file
   done
-  
+
   python $baseDir/bin/python/merge_caller_snps.py --bam '$vcf'
+
+  mcp '*/0001.vcf' '#1.snps.merged.vcf'
+
+  # The mcp function renames the file based on the path (where the * is )
+  # this will take 0001.vcf which uses freebayes vcf info fields.
   """
 }
 
