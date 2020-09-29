@@ -33,13 +33,13 @@ process cgpwxs2 {
 	--bind $baseDir/input:/var/spool/data:ro \
 	/gpfs/afm/cg_pipelines/Pipelines/singularity/images/cgpwxs_3.1.6.img \
 ds-cgpwxs.pl \
--reference $cgp_ref \
--annot $cgp_annot \
--snv_indel $cgp_snv_indel \
--tumour /var/spool/data/${tumor}*.bam \
--tidx /var/spool/data/${tumor}*.bam.bai \
--normal /var/spool/data/${normal}*.bam \
--nidx /var/spool/data/${normal}*.bam.bai \
+-reference /var/spool/ref/cgpwgs_ref/GRCh38/core_ref_GRCh38_hla_decoy_ebv.tar.gz \
+-annot /var/spool/ref/cgpwgs_ref/GRCh38/VAGrENT_ref_GRCh38_hla_decoy_ebv_ensembl_91.tar.gz \
+-snv_indel /var/spool/ref/cgpwgs_ref/GRCh38/SNV_INDEL_ref_GRCh38_hla_decoy_ebv-fragment.tar.gz \
+-tumour /var/spool/data/${tumor}*.cram \
+-tidx /var/spool/data/${tumor}*.cram.crai \
+-normal /var/spool/data/${normal}*.cram \
+-nidx /var/spool/data/${normal}*.cram.crai \
 -exclude NC_007605,hs37d5,GL% \
 -outdir $baseDir/output/hg38_decoy/cgpwxs \
 -sp "Homo sapiens" \

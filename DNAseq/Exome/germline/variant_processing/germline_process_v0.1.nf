@@ -30,7 +30,7 @@ process indels_filter {
   input:
   file vcf from indels_filter_ch.flatten()
   output:
-  file "${vcf.simpleName}_indels.vcf " into indels_sort_ch
+  file "${vcf.simpleName}_indels.vcf" into indels_sort_ch
   script:
   """
   bcftools view -V snps ${vcf} > ${vcf.simpleName}_indels.vcf
