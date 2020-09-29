@@ -33,9 +33,9 @@ process cgpwxs2 {
 	--bind $baseDir/input:/var/spool/data:ro \
 	/gpfs/afm/cg_pipelines/Pipelines/singularity/images/cgpwxs_3.1.6.img \
 ds-cgpwxs.pl \
--reference /var/spool/ref/cgpwgs_ref/GRCh38/core_ref_GRCh38_hla_decoy_ebv.tar.gz \
--annot /var/spool/ref/cgpwgs_ref/GRCh38/VAGrENT_ref_GRCh38_hla_decoy_ebv_ensembl_91.tar.gz \
--snv_indel /var/spool/ref/cgpwgs_ref/GRCh38/SNV_INDEL_ref_GRCh38_hla_decoy_ebv-fragment.tar.gz \
+-reference $cgp_ref \
+-annot $cgp_annot \
+-snv_indel $cgp_snv_indel \
 -tumour /var/spool/data/${tumor}*.cram \
 -tidx /var/spool/data/${tumor}*.cram.crai \
 -normal /var/spool/data/${normal}*.cram \
