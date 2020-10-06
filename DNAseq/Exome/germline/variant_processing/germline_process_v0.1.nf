@@ -67,10 +67,10 @@ process VEP2 {
   script:
   """
   /ensembl-vep/vep -i ${vcf} \
-  --dir /var/spool/mail/VEP_hg38/.vep \
+  --dir $VEP_files \
   -o ${vcf.baseName}_VEP.txt \
   --offline \
-  --fasta $VEP_fasta \
+  --fasta $genome_fasta \
   --fork 5 \
   --cache homo_sapiens \
   --sift p \
@@ -171,10 +171,10 @@ process VEP3 {
   script:
   """
   /ensembl-vep/vep -i ${vcf} \
-  --dir /var/spool/mail/VEP_hg38/.vep \
+  --dir $VEP_files \
   -o ${vcf.baseName}_VEP.txt \
   --offline \
-  --fasta $VEP_fasta \
+  --fasta $genome_fasta \
   --fork 5 \
   --cache homo_sapiens \
   --sift p \
