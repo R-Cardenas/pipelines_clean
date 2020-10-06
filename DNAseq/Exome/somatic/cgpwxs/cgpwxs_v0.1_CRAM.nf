@@ -17,7 +17,7 @@ println """\
          .stripIndent()
 
 process cgpwxs2 {
-	storeDir "$baseDir/output/hg38_decoy/cgpwxs"
+	storeDir "$baseDir/output/cgpwxs"
 	input:
 	val tumor from tumor_ch
 	val normal from normal_ch
@@ -33,7 +33,7 @@ process cgpwxs2 {
 	--bind $baseDir/input:/var/spool/data:ro \
 	/gpfs/afm/cg_pipelines/Pipelines/singularity/images/cgpwxs_3.1.6.img \
 ds-cgpwxs.pl \
--reference $cgp_ref \
+-reference /var/spool/ref/PCAWG_37_ICGC_Sanger_genome/core_PCAWG_hg19.tar.gz \
 -annot $cgp_annot \
 -snv_indel $cgp_snv_indel \
 -tumour /var/spool/data/${tumor}*.cram \

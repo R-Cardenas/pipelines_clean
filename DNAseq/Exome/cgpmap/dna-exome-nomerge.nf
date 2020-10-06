@@ -3,7 +3,7 @@
  */
 
 // Input Reads
-params.read1 = "$baseDir/input/*{1,2}.fq.gz"
+params.read1 = "/gpfs/afm/cg_pipelines/Pipelines/PCAWG/input/*{1,2}.fq.gz"
 
 
 read1_ch = Channel .fromFilePairs( params.read1 )
@@ -33,11 +33,9 @@ println """\
 myLongCmdline = "git clone https://github.com/R-Cardenas/nextflow_pipelines.git"
 result = myLongCmdline.execute().text
 
-
+// will copy files in.. trim. then the afterScript will delete all that is left over.
 process trim_galore{
-
-
-	stageInMode = 'copy' // trim_galore doesnt like sym/hardlinks.
+	stageInMode = "copy" // trim_galore doesnt like sym/hardlinks.
   storeDir "$baseDir/output/cgpMAP/trim_galore"
 	input:
 	tuple val(read2), file(reads) from read2_ch
@@ -56,7 +54,7 @@ process trim_galore{
 	mv ${reads[0].simpleName}_val_1.fq.gz ${reads[0].simpleName}_1.trim.fq.gz
 	mv ${reads[1].simpleName}_val_2.fq.gz ${reads[1].simpleName}_2.trim.fq.gz
 
-	rm -fr ${reads[0]} # remove the copied files to prevent memory loss
+	rm -fr ${reads[0]} # remove the copied files
 	rm -fr ${reads[1]}
 	"""
 }
@@ -64,8 +62,6 @@ process trim_galore{
 
 
 process fqtools{
-
-
   storeDir "$baseDir/output/cgpMAP/trim_galore"
 	input:
 	file read1 from read7_ch
@@ -106,8 +102,7 @@ process fqtools{
 }
 
 process cgpMAP {
-
-
+	afterScript = 'rm -rf {*,.*}'
 	storeDir "$baseDir/output/cgpMAP/${read1.simpleName}"
   input:
 	val read1 from read5_ch
@@ -115,6 +110,8 @@ process cgpMAP {
 	val yaml from yaml_ch.collect()
   output:
   file "*.bam" into cgp_ch
+	file "*.yaml"
+	file "*.log" optional true
   script:
   """
 
@@ -140,8 +137,8 @@ process cgpMAP {
 
 
 process sam_sort {
-
-
+	scratch = true
+	afterScript = 'rm -rf {*,.*}'
   storeDir "$baseDir/output/BAM/sorted"
   input:
   file bam from cgp_ch
@@ -158,8 +155,8 @@ process sam_sort {
 
 
 process picard_pcr_removal {
-
-
+	scratch = true
+	afterScript = 'rm -rf {*,.*}'
 	storeDir "$baseDir/output/BAM/merged_lanes"
   input:
   file bam from dup_ch.flatten()
@@ -176,8 +173,7 @@ process picard_pcr_removal {
 }
 
 process bam_index {
-
-
+	afterScript = 'rm -rf {*,.*}'
 	storeDir "$baseDir/output/BAM/merged_lanes"
   input:
   file bam from index1_ch
@@ -197,8 +193,7 @@ process bam_index {
 
 
 process hybrid_stats {
-
-
+	afterScript = 'rm -rf {*,.*}'
 	storeDir "$baseDir/output/BAM/hybrid_stats"
   input:
   file bam from hs_ch
@@ -231,8 +226,7 @@ process hybrid_stats {
 }
 
 process alignment_stats{
-
-
+	afterScript = 'rm -rf {*,.*}'
 	storeDir "$baseDir/output/BAM/alignment_stats"
 	input:
 	file bam from bam10_ch
@@ -251,7 +245,7 @@ process alignment_stats{
 }
 
 process verifybamid{
-
+	afterScript = 'rm -rf {*,.*}'
 	stageInMode = 'copy' // somalier doesnt like sym/hardlinks.
 	storeDir "$baseDir/output/BAM/verifyBamID"
 	input:
@@ -282,7 +276,7 @@ process verifybamid{
 
 
 process somalier{
-
+	afterScript = 'rm -rf {*,.*}'
 	stageInMode = 'copy' // somalier doesnt like sym/hardlinks.
   storeDir "$baseDir/output/BAM/somalier"
   input:

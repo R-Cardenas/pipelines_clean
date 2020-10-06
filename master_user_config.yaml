@@ -15,9 +15,9 @@
 
 # INFO: If multiple inputs required seperate by a single space e.g. 'freebayes gatk-haplotypecaller'
 
-################
-## USER INPUT ##
-################
+#######################
+## USER INPUT - MAIN ##
+#######################
 
 #1 Enter the project name. (e.g. Project1)
 
@@ -70,7 +70,14 @@ af: '0.1'
 
 #1 Allele frequency proportion?? ## !! NEEDS ADDING !!!
 
-# Below enter the normal and tumor samples, as they should be patient matched for this analysis, ensure that the order for tumor and normal are the same.
+#10 Do TUMOUR/NORMAL matched samples have identical sample names? (e.g. S101-TUMOUR-UID.fq.gz & S101-NORMAL-UID.fq.gz)
+# If the answer below is 'yes' then you can leave #11 blank.
+
+matched_identical: 'no'
+
+
+#11 Enter the normal and tumor samples.
+# ensure that the order for tumor and normal are the same.
 
 Tumour_samples: 'A_1, A_2'
 Normal_samples: 'A_1, A_2'
