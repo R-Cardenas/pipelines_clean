@@ -26,8 +26,8 @@ files2 = files.split(" ")
 # Extract samples names from each input and create unique list
 bam_samples = list()
 for f in files2:
-    list = f.split("-")
-    sample = list[1]
+    Alist = f.split("-")
+    sample = Alist[1]
     print(sample)
     bam_samples.append(sample)
 

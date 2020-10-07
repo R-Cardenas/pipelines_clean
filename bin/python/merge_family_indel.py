@@ -46,11 +46,9 @@ unique = set(bam_samples)
 # If >2 the proccess will have to be repeated with the first intersected file.
 
 for f in unique:
-    regex = re.compile(fr'{f}')
-    selected_files = list(filter(regex.search, files2))
-
-    file = pathlib.Path(f'{f}_intersect.vcf')
-    print(f)
+    regex = f + "-"
+    regex2 = re.compile(fr'{regex}') # searched for 'samplename-' hyphen needed for end of samples or S2 and S22 would be mixed (e.g.).
+    selected_files = list(filter(regex2.search, files2)) #searches how many files with same sample name
 
     if len(selected_files) == 0:
         print('no files detected')
@@ -58,42 +56,56 @@ for f in unique:
         print('only one file found using sample names - need 2 minimum for intersection')
     elif len(selected_files) == 2:
         print('selected files = 2')
+
+        # We need to reconstruct the name again for merge_family_indel.py - see line 71
+        outputname = selected_files[0].split("-")
+        outputname2 = outputname[0] + "-" + outputname[1] + "-" + "family.merged.indels.vcf"
+
         cmd = f"""
         bedtools intersect \
-        -a {selected_files[0]} \
-        -b {selected_files[1]} \
+        -a {selected_files[1]} \
+        -b {selected_files[0]} \
         -f 0.10 -F 0.10 -wa -header \
-        > {f}.fam.indels.merged.vcf"""
+        > {outputname2} """
         print(cmd)
         os.system(cmd)
 
     elif len(selected_files) > 2:
         print('selected files > 2')
+
+        # We need to reconstruct the name again for merge_family_indel.py - see line 71
+        outputname = selected_files[0].split("-")
+        outputname2 = outputname[0] + "-" + outputname[1] + "-" + "family.merged.indels.vcf"
+
+        file = pathlib.Path(f'{outputname2}')
+
         def loop1():
             if file.exists():
                 print('file exists')
                 for z in range(2,len(selected_files)): # notice that '-a' is now the first intersection line 59-67
                     cmd = f"""
                     bedtools intersect \
-                    -a {f}.fam.indels.merged.vcf\
+                    -a {outputname2} \
                     -b {selected_files[z]} \
                     -f 0.10 -F 0.10 -wa -header \
-                    > {f}.fam.indels.merged.vcf"""
+                    > {outputname2} """
                     print(cmd)
                     os.system(cmd)
             else:
                 cmd = f"""
                 bedtools intersect \
-                -a {selected_files[0]} \
-                -b {selected_files[1]} \
+                -a {selected_files[1]} \
+                -b {selected_files[0]} \
                 -f 0.10 -F 0.10 -wa -header \
-                > {f}.fam.indels.merged.vcf"""
+                > {outputname2} """
                 print(cmd)
                 os.system(cmd)
                 loop1()
 
 
         loop1()
+
+
 
 
 print('Merging of vcf caller files has finished')
