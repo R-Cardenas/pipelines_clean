@@ -48,6 +48,9 @@ for i in unique:
     count = subprocess.run([cmd_count], stdout=subprocess.PIPE, shell = True)
     count_number = str(int(count.stdout))
 
-    script2 = 'bcftools isec -c indels -n +' + count_number + ' -o ' + sample + '.caller.snps.merged.vcf -p ' + outputname2 + ' ' + sample_wild
-    print(script2)
-    os.system(script2)
+    if int(count.stdout) < 2:
+        raise SyntaxError('ERROR there is less than 2 "caller" samples')
+    else:
+        script2 = 'bcftools isec -c indels -n +' + count_number + ' -o ' + sample + '.caller.snps.merged.vcf -p ' + outputname2 + ' ' + sample_wild
+        print(script2)
+        os.system(script2)

@@ -12,7 +12,7 @@ process merge_caller_indels {
   input:
   file vcf from vcf2_ch.collect()
   output:
-  file "*caller.merged.indels.vcf" into fam_ch
+  file "*caller.merged.indels.vcf.gz" into fam_ch
   script:
   """
   for file in *.vcf*; do
@@ -32,9 +32,10 @@ process merge_family_indels {
   input:
   file vcf from fam_ch
   output:
-  file "*family.merged.indels.vcf" into indels_filter_ch
+  file "*family.merged.indels.vcf.gz" into indels_filter_ch
   script:
   """
+
   for file in *.vcf*; do
     bcftools index \$file
   done
@@ -132,7 +133,7 @@ process merge_caller_snps {
   input:
   file vcf from vcf1_ch.collect()
   output:
-  file "*-callermerged.vcf.gz" into snps_fam_ch
+  file "*callermerged.vcf.gz" into snps_fam_ch
   script:
   """
   for file in *.vcf*; do
@@ -157,16 +158,16 @@ process merge_fam_snps{
   input:
   file vcf from snps_fam_ch
   output:
-  file "*.family.snps.merged.vcf.gz" into snps_filter_ch
+  file "*familymerged.vcf.gz" into snps_filter_ch
   script:
   """
-  for file in *.vcf*; do
+  for file in *.vcf.gz; do
     bcftools index \$file
   done
 
   python $baseDir/bin/python/merge_family_snps.py --bam '$vcf'
 
-  mcp '*/0001.vcf' '#1.family.snps.merged.vcf'
+  mcp '*/0001.vcf' '#1.vcf'
 
   bgzip *.vcf
 
