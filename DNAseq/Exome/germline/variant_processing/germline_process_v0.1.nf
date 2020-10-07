@@ -12,7 +12,7 @@ process merge_caller_indels {
   input:
   file vcf from vcf2_ch.collect()
   output:
-  file "*indels.merged.vcf" into indels_filter_ch
+  file "*.caller.indels.merged.vcf" into fam_ch
   script:
   """
   for file in *.vcf*; do
@@ -20,6 +20,24 @@ process merge_caller_indels {
   done
 
   python $baseDir/bin/python/merge_caller_indel.py --bam '$vcf'
+  """
+}
+
+process merge_family_indels {
+
+
+  storeDir "$baseDir/output/VCF_collect/caller_merged"
+  input:
+  file vcf from fam_ch
+  output:
+  file "*.fam.indels.merged.vcf" into indels_filter_ch
+  script:
+  """
+  for file in *.vcf*; do
+    bcftools index \$file
+  done
+
+  python $baseDir/bin/python/merge_family_indel.py --bam '$vcf'
   """
 }
 
@@ -110,7 +128,7 @@ process merge_caller_snps {
   input:
   file vcf from vcf1_ch.collect()
   output:
-  file "*snps.merged.vcf" into snps_filter_ch
+  file "*snps.merged.vcf" into snps_fam_ch
   script:
   """
   for file in *.vcf*; do
@@ -119,12 +137,37 @@ process merge_caller_snps {
 
   python $baseDir/bin/python/merge_caller_snps.py --bam '$vcf'
 
-  mcp '*/0001.vcf' '#1.snps.merged.vcf'
+  mcp '*/0001.vcf' '#1.caller.snps.merged.vcf'
 
   # The mcp function renames the file based on the path (where the * is )
   # this will take 0001.vcf which uses freebayes vcf info fields.
   """
 }
+
+process merge_fam_snps {
+
+
+  storeDir "$baseDir/output/VCF_collect/caller_merged"
+  input:
+  file vcf from snps_fam_ch
+  output:
+  file "*.family.snps.merged.vcf" into snps_filter_ch
+  script:
+  """
+  for file in *.vcf*; do
+    bcftools index \$file
+  done
+
+  python $baseDir/bin/python/merge_family_snps.py --bam '$vcf'
+
+  mcp '*/0001.vcf' '#1.family.snps.merged.vcf'
+
+  # The mcp function renames the file based on the path (where the * is )
+  # this will take 0001.vcf which uses freebayes vcf info fields.
+  """
+}
+
+
 
 process snps_filter {
 

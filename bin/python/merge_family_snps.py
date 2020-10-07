@@ -45,7 +45,6 @@ for i in unique:
     count = subprocess.run([cmd_count], stdout=subprocess.PIPE, shell = True)
     count_number = str(int(count.stdout))
 
-    script2 = 'bcftools isec -c indels -n +' + count_number + ' -o ' + sample + '.caller.snps.merged.vcf -p ' + sample + ' ' + sample_wild
+    script2 = 'bcftools isec -c indels -n +' + count_number + ' -o ' + sample + '.family.snps.merged.vcf -p ' + sample + ' ' + sample_wild
     print(script2)
     os.system(script2)
-
