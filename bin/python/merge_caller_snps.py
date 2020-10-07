@@ -7,18 +7,18 @@ import subprocess
 import re
 import pathlib
 
-files = 'sample1-fam1-GATK.vcf.gz sample1-fam1-freebayes.vcf.gz'
+#files = 'sample1-fam1-GATK.vcf.gz sample1-fam1-freebayes.vcf.gz'
 
 #############
 # ARG PARSE #
 #############
 
 # Split the input from nextflow (space delim)
-#parser = argparse.ArgumentParser()
-#parser.add_argument('--bam', required=True)
+parser = argparse.ArgumentParser()
+parser.add_argument('--bam', required=True)
 
-#args = parser.parse_args()
-#files = args.bam
+args = parser.parse_args()
+files = args.bam
 files2 = files.split(" ")
 
 
@@ -50,4 +50,4 @@ for i in unique:
 
     script2 = 'bcftools isec -c indels -n +' + count_number + ' -o ' + sample + '.caller.snps.merged.vcf -p ' + outputname2 + ' ' + sample_wild
     print(script2)
-    #os.system(script2)
+    os.system(script2)
