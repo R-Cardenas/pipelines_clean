@@ -65,7 +65,7 @@ process zip {
 	file zip from zip2_ch
 	output:
 	file "${zip}.freebayes.vcf.gz" into merge_ch
-	file "${zip.}.gz.tbi" into csi_ch
+	file "${zip}.gz.tbi" into csi_ch
 	script:
 	"""
 	bgzip ${zip}

@@ -6,9 +6,9 @@ vcf_ch.into { vcf1_ch; vcf2_ch }
 
 // use pipeline bundle 1 has python3 installed
 process merge_caller_indels {
-
-
-  storeDir "$baseDir/output/VCF_collect/caller_merged"
+  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 6
+  storeDir "$baseDir/output/VCF_collect/caller_merged/indels"
   input:
   file vcf from vcf2_ch.collect()
   output:
@@ -21,16 +21,19 @@ process merge_caller_indels {
 
   python $baseDir/bin/python/merge_caller_indel.py --bam '$vcf'
 
-  bgzip *.vcf
+  for file in *.vcf; do
+    bgzip \$file
+  done
+
   """
 }
 
 process merge_family_indels {
-
-
-  storeDir "$baseDir/output/VCF_collect/caller_merged"
+  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 6
+  storeDir "$baseDir/output/VCF_collect/caller_merged/indels"
   input:
-  file vcf from fam_ch
+  file vcf from fam_ch.collect()
   output:
   file "*family.merged.indels.vcf.gz" into indels_filter_ch
   script:
@@ -42,14 +45,16 @@ process merge_family_indels {
 
   python $baseDir/bin/python/merge_family_indel.py --bam '$vcf'
 
-  bgzip *.vcf
+  for file in *.vcf; do
+    bgzip \$file
+  done
   """
 }
 
 process indels_filter {
-
-
-  storeDir "$baseDir/output/VCF_collect/caller_merged"
+  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 6
+  storeDir "$baseDir/output/VCF_collect/caller_merged/indels"
   input:
   file vcf from indels_filter_ch.flatten()
   output:
@@ -61,13 +66,13 @@ process indels_filter {
 }
 
 process indels_sort {
-
-
-  storeDir "$baseDir/output/VCF_collect/caller_merged"
+  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 6
+  storeDir "$baseDir/output/VCF_collect/caller_merged/indels"
   input:
   file vcf from indels_sort_ch
   output:
-  file "${vcf.baseName}_sorted.vcf.gz" into vep3_ch
+  file "${vcf.baseName}_sorted.vcf.gz"
   script:
   """
   mkdir -p tmp
@@ -77,59 +82,13 @@ process indels_sort {
 
 }
 
-// dir needs to be changed
-// and VEP_fasta added
-process VEP2 {
-
-
-  storeDir "$baseDir/output/VCF_collect/caller_merged/VEP"
-  input:
-  file vcf from vep3_ch
-  output:
-  file "${vcf.baseName}_VEP.txt" into vep4_ch
-  script:
-  """
-  /ensembl-vep/vep -i ${vcf} \
-  --dir $VEP_files \
-  -o ${vcf.baseName}_VEP.txt \
-  --offline \
-  --fasta $genome_fasta \
-  --fork 5 \
-  --cache homo_sapiens \
-  --sift p \
-  --polyphen p \
-  --variant_class \
-  --af_gnomad \
-  --no_stats \
-  --tab \
-  --show_ref_allele \
-  --symbol \
-  --verbose \
-  --domains \
-  --regulatory
-  """
-}
-
-process vep_header {
-  storeDir "$baseDir/output/VCF_collect/caller_merged/VEP"
-  input:
-  file txt from vep4_ch
-  output:
-  file "${txt.baseName}_noheader.txt"
-  script:
-  """
-  sed -i 's/#Uploaded_variation/Uploaded_variation/g' ${txt}
-  awk '!/\\#/' ${txt} > ${txt.baseName}_noheader.txt
-  """
-}
-
 
 // and VEP_fasta added
 // use pipeline bundle 1 has python3 installed
 process merge_caller_snps {
-
-
-  storeDir "$baseDir/output/VCF_collect/caller_merged"
+  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 6
+  storeDir "$baseDir/output/VCF_collect/caller_merged/snps"
   input:
   file vcf from vcf1_ch.collect()
   output:
@@ -144,7 +103,9 @@ process merge_caller_snps {
 
   mcp '*/0001.vcf' '#1.vcf'
 
-  bgzip *.vcf
+  for file in *.vcf; do
+    bgzip \$file
+  done
 
   # The mcp function renames the file based on the path (where the * is )
   # this will take 0001.vcf which uses freebayes vcf info fields.
@@ -152,11 +113,11 @@ process merge_caller_snps {
 }
 
 process merge_fam_snps{
-
-
-  storeDir "$baseDir/output/VCF_collect/caller_merged"
+  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 6
+  storeDir "$baseDir/output/VCF_collect/caller_merged/snps"
   input:
-  file vcf from snps_fam_ch
+  file vcf from snps_fam_ch.collect()
   output:
   file "*familymerged.vcf.gz" into snps_filter_ch
   script:
@@ -169,7 +130,9 @@ process merge_fam_snps{
 
   mcp '*/0001.vcf' '#1.vcf'
 
-  bgzip *.vcf
+  for file in *.vcf; do
+    bgzip \$file
+  done
 
   # The mcp function renames the file based on the path (where the * is )
   # this will take 0001.vcf which uses freebayes vcf info fields.
@@ -179,9 +142,9 @@ process merge_fam_snps{
 
 
 process snps_filter {
-
-
-  storeDir "$baseDir/output/VCF_collect/caller_merged"
+  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 6
+  storeDir "$baseDir/output/VCF_collect/caller_merged/snps"
   input:
   file vcf from snps_filter_ch.flatten()
   output:
@@ -193,13 +156,13 @@ process snps_filter {
 }
 
 process snps_sort {
-
-
-  storeDir "$baseDir/output/VCF_collect/caller_merged"
+  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 6
+  storeDir "$baseDir/output/VCF_collect/caller_merged/snps"
   input:
   file vcf from snps_sort_ch
   output:
-  file "${vcf.baseName}_sorted.vcf.gz" into vep_ch
+  file "${vcf.baseName}_sorted.vcf.gz"
   script:
   """
   mkdir -p tmp
@@ -207,51 +170,4 @@ process snps_sort {
   rm -fr tmp
   """
 
-}
-
-
-// dir needs to be changed
-// and VEP_fasta added
-process VEP3 {
-
-
-  storeDir "$baseDir/output/VCF_collect/caller_merged/VEP"
-  input:
-  file vcf from vep_ch
-  output:
-  file "${vcf.baseName}_VEP.txt" into vep2_ch
-  script:
-  """
-  /ensembl-vep/vep -i ${vcf} \
-  --dir $VEP_files \
-  -o ${vcf.baseName}_VEP.txt \
-  --offline \
-  --fasta $genome_fasta \
-  --fork 5 \
-  --cache homo_sapiens \
-  --sift p \
-  --polyphen p \
-  --variant_class \
-  --af_gnomad \
-  --no_stats \
-  --tab \
-  --show_ref_allele \
-  --symbol \
-  --verbose \
-  --domains \
-  --regulatory
-  """
-}
-
-process vep_header2 {
-  storeDir "$baseDir/output/VCF_collect/caller_merged/VEP"
-  input:
-  file txt from vep2_ch
-  output:
-  file "${txt.baseName}_noheader.txt"
-  script:
-  """
-  sed -i 's/#Uploaded_variation/Uploaded_variation/g' ${txt}
-  awk '!/\\#/' ${txt} > ${txt.baseName}_noheader.txt
-  """
 }
