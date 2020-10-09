@@ -97,10 +97,10 @@ try:
     f1_list[2]
     f1_list[3]
 except IndexError:
-    PU1 = "NULL"
+    PU2 = "NULL"
     warning = "echo 'PU 2 code is missing: adding generic default.' >> fqtools_WARNING_2.txt''"
 else:
-     PU1 = "    PU: " + f1_list[2] + "." + f1_list[3] + "\n"
+     PU2 = "    PU: " + f1_list[2] + "." + f1_list[3] + "\n"
 
 
 
@@ -111,7 +111,7 @@ LB1 = "    LB: " + name1 + "_" + seq1 + "\n"
 #FQ2
 FQ2 = "  " + n2 + ":\n"
 LB2 = "    LB: " + name2 + "_" + seq2 + "\n"
-PU2 = "    PU: " + f2_list[2] + "." + f2_list[3] + "\n"
+
 # ## Forming the final YAML file for cgpmap and save file
 yaml = SM + RG + FQ1 + PL + LB1 + PU1 + FQ2 + PL + LB2 + PU2
 print(yaml)
