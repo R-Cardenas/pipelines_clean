@@ -88,7 +88,9 @@ for f in unique:
                     -a {outputname2} \
                     -b {selected_files[z]} \
                     -f 0.10 -F 0.10 -wa -header \
-                    > {outputname2} """
+                    > {outputname2}.tmp
+
+                    mv {outputname2}.tmp {outputname2}""" # bedtools needs another name otherwise results in empty file
                     print(cmd)
                     os.system(cmd)
             else:
