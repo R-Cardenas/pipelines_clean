@@ -72,7 +72,7 @@ process indels_sort {
   input:
   file vcf from indels_sort_ch
   output:
-  file "${vcf.baseName}_sorted.vcf.gz"
+  file "${vcf.baseName}_sorted.vcf.gz" into vep_ch
   script:
   """
   mkdir -p tmp
@@ -82,6 +82,53 @@ process indels_sort {
 
 }
 
+// you may want to repeat this  but to create the VCF files also
+process VEP2 {
+
+  storeDir "$baseDir/output/VCF_collect/split_vcf/VEP"
+  input:
+  file vcf from vep_ch.flatten()
+  output:
+  file "${vcf.baseName}_VEP.txt" into vep_filter_ch
+  script:
+  """
+  /ensembl-vep/vep -i ${vcf} \
+  --dir /var/spool/mail/VEP_hg38/.vep \
+  -o ${vcf.baseName}_VEP.txt \
+  --cache homo_sapiens \
+  --sift b \
+  --polyphen b \
+  --variant_class \
+  --af_gnomad \
+  --hgvs \
+  --domains \
+  --tab \
+  --show_ref_allele \
+  --symbol \
+  --nearest gene \
+  --verbose
+  """
+}
+
+process vep_filter {
+  storeDir "$baseDir/output/VCF_collect/split_vcf/VEP"
+  input:
+  file txt from vep_filter_ch
+  output:
+  file "${txt.baseName}_noheader.txt"
+  script:
+  """
+  /ensembl-vep/filter_vep \
+  -i ${txt} \
+  -o ${txt.baseName}_filtered.txt \
+  --format tab \
+  --filter "SIFT != tolerated" \
+  --filter "SIFT != benign" \
+  --filter "SIFT != Tolerated" \
+  --filter "SIFT != Benign" \
+  --filter "Exome_NFE_AF < 0.1" \
+  """
+}
 
 // and VEP_fasta added
 // use pipeline bundle 1 has python3 installed
@@ -162,7 +209,7 @@ process snps_sort {
   input:
   file vcf from snps_sort_ch
   output:
-  file "${vcf.baseName}_sorted.vcf.gz"
+  file "${vcf.baseName}_sorted.vcf.gz" into vep2_ch
   script:
   """
   mkdir -p tmp
@@ -170,4 +217,52 @@ process snps_sort {
   rm -fr tmp
   """
 
+}
+
+// you may want to repeat this  but to create the VCF files also
+process VEP3 {
+
+  storeDir "$baseDir/output/VCF_collect/split_vcf/VEP"
+  input:
+  file vcf from vep2_ch.flatten()
+  output:
+  file "${vcf.baseName}_VEP.txt" into vep_filter2_ch
+  script:
+  """
+  /ensembl-vep/vep -i ${vcf} \
+  --dir /var/spool/mail/VEP_hg38/.vep \
+  -o ${vcf.baseName}_VEP.txt \
+  --cache homo_sapiens \
+  --sift b \
+  --polyphen b \
+  --variant_class \
+  --af_gnomad \
+  --hgvs \
+  --domains \
+  --tab \
+  --show_ref_allele \
+  --symbol \
+  --nearest gene \
+  --verbose
+  """
+}
+
+process vep_filter2 {
+  storeDir "$baseDir/output/VCF_collect/split_vcf/VEP"
+  input:
+  file txt from vep_filter2_ch
+  output:
+  file "${txt.baseName}_noheader.txt"
+  script:
+  """
+  /ensembl-vep/filter_vep \
+  -i ${txt} \
+  -o ${txt.baseName}_filtered.txt \
+  --format tab \
+  --filter "SIFT != tolerated" \
+  --filter "SIFT != benign" \
+  --filter "SIFT != Tolerated" \
+  --filter "SIFT != Benign" \
+  --filter "Exome_NFE_AF < 0.1" \
+  """
 }

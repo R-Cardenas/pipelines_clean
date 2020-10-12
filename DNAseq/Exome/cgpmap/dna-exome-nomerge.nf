@@ -102,7 +102,6 @@ process fqtools{
 }
 
 process cgpMAP {
-	afterScript = 'rm -rf {*,.*}'
 	storeDir "$baseDir/output/cgpMAP/${read1.simpleName}"
   input:
 	val read1 from read5_ch
@@ -129,7 +128,7 @@ process cgpMAP {
 	mv $baseDir/output/cgpMAP/${read1.simpleName}/*.bam \
 	$baseDir/output/cgpMAP/${read1.simpleName}/${read1.simpleName}.bam
 
-	echo 'fq1: ${read1} fq2: ${read2} bam_name: ${read1.simpleName}' >> $baseDir/${projectname}_cgpmap_samples.log
+	echo 'fq1: ${read1} fq2: ${read2} bam_name: ${read1.simpleName}' >> $baseDir/logs/cgpmap_samples.log
 	ls -l  ${read1} >> $baseDir/logs/symbolic_test_fastq.log
 	ls -l  ${read2} >> $baseDir/logs/symbolic_test_fastq.log
   """

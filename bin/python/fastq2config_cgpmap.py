@@ -87,7 +87,7 @@ try:
     f1_list[2]
     f1_list[3]
 except IndexError:
-    PU1 = "NULL"
+    PU1 = "    PU: NULL" + "\n"
     warning = "echo 'PU 1 code is missing: adding generic default.' >> fqtools_WARNING_1.txt''"
 
 else:
@@ -97,10 +97,10 @@ try:
     f1_list[2]
     f1_list[3]
 except IndexError:
-    PU2 = "NULL"
+    PU2 = "    PU: NULL" + "\n"
     warning = "echo 'PU 2 code is missing: adding generic default.' >> fqtools_WARNING_2.txt''"
 else:
-     PU2 = "    PU: " + f1_list[2] + "." + f1_list[3] + "\n"
+    PU2 = "    PU: " + f1_list[2] + "." + f1_list[3] + "\n"
 
 
 
