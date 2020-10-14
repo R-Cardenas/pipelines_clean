@@ -8,7 +8,7 @@ vcf_ch.into { vcf1_ch; vcf2_ch }
 process merge_caller_indels {
   errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
 	maxRetries 6
-  storeDir "$baseDir/output/VCF_collect/caller_merged/indels"
+  storeDir "$baseDir/output/VCF_collect/merge_vcf/indels/caller"
   input:
   file vcf from vcf2_ch.collect()
   output:
@@ -31,7 +31,7 @@ process merge_caller_indels {
 process merge_family_indels {
   errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
 	maxRetries 6
-  storeDir "$baseDir/output/VCF_collect/caller_merged/indels"
+  scratch true
   input:
   file vcf from fam_ch.collect()
   output:
@@ -54,29 +54,29 @@ process merge_family_indels {
 process indels_filter {
   errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
 	maxRetries 6
-  storeDir "$baseDir/output/VCF_collect/caller_merged/indels"
+  scratch true
   input:
   file vcf from indels_filter_ch.flatten()
   output:
-  file "${vcf.simpleName}_indels.vcf.gz" into indels_sort_ch
+  file "${vcf.simpleName}.indels.vcf.gz" into indels_sort_ch
   script:
   """
-  bcftools view -O z -V snps ${vcf} > ${vcf.simpleName}_indels.vcf.gz
+  bcftools view -O z -v indels ${vcf} > ${vcf.simpleName}.indels.vcf.gz
   """
 }
 
 process indels_sort {
   errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
 	maxRetries 6
-  storeDir "$baseDir/output/VCF_collect/caller_merged/indels"
+  storeDir "$baseDir/output/VCF_collect/merge_vcf/indels/family"
   input:
   file vcf from indels_sort_ch
   output:
-  file "${vcf.baseName}_sorted.vcf.gz" into vep_ch
+  file "${vcf.simpleName}.indels.family.merged.vcf.gz" into vep_ch
   script:
   """
   mkdir -p tmp
-  bcftools sort -O z -o ${vcf.baseName}_sorted.vcf.gz ${vcf} -T tmp
+  bcftools sort -O z -o ${vcf.simpleName}.indels.family.merged.vcf.gz ${vcf} -T tmp
   rm -fr tmp
   """
 
@@ -84,8 +84,7 @@ process indels_sort {
 
 // you may want to repeat this  but to create the VCF files also
 process VEP2 {
-
-  storeDir "$baseDir/output/VCF_collect/split_vcf/VEP"
+  storeDir "$baseDir/output/VCF_collect/merge_vcf/indels/family/VEP"
   input:
   file vcf from vep_ch.flatten()
   output:
@@ -98,6 +97,9 @@ process VEP2 {
   --cache homo_sapiens \
   --sift b \
   --polyphen b \
+  --offline \
+  --fasta $genome_fasta \
+  --fork 5 \
   --variant_class \
   --af_gnomad \
   --hgvs \
@@ -106,36 +108,19 @@ process VEP2 {
   --show_ref_allele \
   --symbol \
   --nearest gene \
+  --no_stats \
   --verbose
   """
 }
 
-process vep_filter {
-  storeDir "$baseDir/output/VCF_collect/split_vcf/VEP"
-  input:
-  file txt from vep_filter_ch
-  output:
-  file "${txt.baseName}_noheader.txt"
-  script:
-  """
-  /ensembl-vep/filter_vep \
-  -i ${txt} \
-  -o ${txt.baseName}_filtered.txt \
-  --format tab \
-  --filter "SIFT != tolerated" \
-  --filter "SIFT != benign" \
-  --filter "SIFT != Tolerated" \
-  --filter "SIFT != Benign" \
-  --filter "Exome_NFE_AF < 0.1" \
-  """
-}
+
 
 // and VEP_fasta added
 // use pipeline bundle 1 has python3 installed
 process merge_caller_snps {
   errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
 	maxRetries 6
-  storeDir "$baseDir/output/VCF_collect/caller_merged/snps"
+  storeDir "$baseDir/output/VCF_collect/merge_vcf/snps/caller"
   input:
   file vcf from vcf1_ch.collect()
   output:
@@ -162,7 +147,7 @@ process merge_caller_snps {
 process merge_fam_snps{
   errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
 	maxRetries 6
-  storeDir "$baseDir/output/VCF_collect/caller_merged/snps"
+  scratch true
   input:
   file vcf from snps_fam_ch.collect()
   output:
@@ -187,33 +172,35 @@ process merge_fam_snps{
 }
 
 
-
+// snps includes snps and MNPs
+// rationale for mnps in this section and not indels
+// mnps can be covered but whole reads length so variant callers shouldnt struggle as much as with indels
 process snps_filter {
   errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
 	maxRetries 6
-  storeDir "$baseDir/output/VCF_collect/caller_merged/snps"
+  scratch true
   input:
   file vcf from snps_filter_ch.flatten()
   output:
-  file "${vcf.simpleName}_snps.vcf.gz" into snps_sort_ch
+  file "${vcf.simpleName}.snps.vcf.gz" into snps_sort_ch
   script:
   """
-  bcftools view -O z -v snps ${vcf} > ${vcf.simpleName}_snps.vcf.gz
+  bcftools view -O z -V indels ${vcf} > ${vcf.simpleName}.snps.vcf.gz
   """
 }
 
 process snps_sort {
   errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
 	maxRetries 6
-  storeDir "$baseDir/output/VCF_collect/caller_merged/snps"
+  storeDir "$baseDir/output/VCF_collect/merge_vcf/snps/family"
   input:
   file vcf from snps_sort_ch
   output:
-  file "${vcf.baseName}_sorted.vcf.gz" into vep2_ch
+  file "${vcf.simpleName}.snps.family.merged.vcf.gz" into vep2_ch
   script:
   """
   mkdir -p tmp
-  bcftools sort -O z -o ${vcf.baseName}_sorted.vcf.gz ${vcf} -T tmp
+  bcftools sort -O z -o ${vcf.simpleName}.snps.family.merged.vcf.gz ${vcf} -T tmp
   rm -fr tmp
   """
 
@@ -235,6 +222,9 @@ process VEP3 {
   --cache homo_sapiens \
   --sift b \
   --polyphen b \
+  --offline \
+  --fasta $genome_fasta \
+  --fork 5 \
   --variant_class \
   --af_gnomad \
   --hgvs \
@@ -243,26 +233,7 @@ process VEP3 {
   --show_ref_allele \
   --symbol \
   --nearest gene \
+  --no_stats \
   --verbose
-  """
-}
-
-process vep_filter2 {
-  storeDir "$baseDir/output/VCF_collect/split_vcf/VEP"
-  input:
-  file txt from vep_filter2_ch
-  output:
-  file "${txt.baseName}_noheader.txt"
-  script:
-  """
-  /ensembl-vep/filter_vep \
-  -i ${txt} \
-  -o ${txt.baseName}_filtered.txt \
-  --format tab \
-  --filter "SIFT != tolerated" \
-  --filter "SIFT != benign" \
-  --filter "SIFT != Tolerated" \
-  --filter "SIFT != Benign" \
-  --filter "Exome_NFE_AF < 0.1" \
   """
 }

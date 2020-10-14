@@ -109,7 +109,6 @@ process cgpMAP {
 	val yaml from yaml_ch.collect()
   output:
   file "*.bam" into cgp_ch
-	file "*.yaml"
 	file "*.log" optional true
   script:
   """
