@@ -43,23 +43,23 @@ process trim_galore{
 	tuple val(read2), file(reads) from read2_ch
 	output:
 	file "${reads[0].simpleName}_1.trim.fq.gz" into (read5_ch, read7_ch)
-	file "${reads[1].simpleName}_2.trim.fq.gz" into (read10_ch, read12_ch)
+	file "${reads[0].simpleName}_2.trim.fq.gz" into (read10_ch, read12_ch)
 	file("*.html") optional true
 	script: {
 	"""
 	mkdir -p $baseDir/logs
 
-	trim_galore --paired \
-	--fastqc --illumina \
+	trim_galore --paired --fastqc --illumina \
+	--basename ${reads[0].simpleName} \
 	${reads[0]} ${reads[1]}
 
 	mv ${reads[0].simpleName}_val_1.fq.gz ${reads[0].simpleName}_1.trim.fq.gz
-	mv ${reads[1].simpleName}_val_2.fq.gz ${reads[1].simpleName}_2.trim.fq.gz
+	mv ${reads[0].simpleName}_val_2.fq.gz ${reads[0].simpleName}_2.trim.fq.gz
 
 	rm -fr ${reads[0]} # remove the copied files to prevent memory loss
 	rm -fr ${reads[1]}
 	"""
-}	
+}
 }
 
 
@@ -165,7 +165,10 @@ process bam_merge {
 	file "*_merged.bam" into dup_ch
   script:
   """
-	python /misc/merge_bam.py --bam $bam
+	for f in \$(ls *.bam | sed -e 's/.*[/]//' -e 's/_.*//' | sort | uniq)
+	do
+	samtools merge \${f}_merged.bam \${f}*
+	done
   """
 }
 

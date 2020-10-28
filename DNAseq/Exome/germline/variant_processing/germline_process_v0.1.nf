@@ -113,7 +113,18 @@ process VEP2 {
   """
 }
 
-
+process vep_header {
+  storeDir "$baseDir/output/VCF_collect/split_vcf/VEP"
+  input:
+  file txt vep_filter_ch
+  output:
+  file "${txt.baseName}_noheader.txt"
+  script:
+  """
+  sed -i 's/#Uploaded_variation/Uploaded_variation/g' ${txt}
+  awk '!/\\#/' ${txt} > ${txt.baseName}_noheader.txt
+  """
+}
 
 // and VEP_fasta added
 // use pipeline bundle 1 has python3 installed
@@ -235,5 +246,18 @@ process VEP3 {
   --nearest gene \
   --no_stats \
   --verbose
+  """
+}
+
+process vep_header {
+  storeDir "$baseDir/output/VCF_collect/split_vcf/VEP"
+  input:
+  file txt vep_filter2_ch
+  output:
+  file "${txt.baseName}_noheader.txt"
+  script:
+  """
+  sed -i 's/#Uploaded_variation/Uploaded_variation/g' ${txt}
+  awk '!/\\#/' ${txt} > ${txt.baseName}_noheader.txt
   """
 }

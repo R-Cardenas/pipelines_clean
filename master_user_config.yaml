@@ -24,7 +24,7 @@
 projectname: 'Tumoroid'
 
 
-#2 What samples are these? (e.g. dna-exome-germline)
+#2 What samples are these? (i.e. dna-exome-germline, dna-wgs-germline, dna-exome-somatic, dna-wgs-somatic, rna-seq)
 
 samples: 'dna-exome'
 

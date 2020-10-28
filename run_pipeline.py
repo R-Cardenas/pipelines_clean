@@ -86,7 +86,9 @@ elif data['samples'].lower() == 'dna-exome' and data['variant'] == 'somatic':
     cmd1 = "cp DNAseq/Exome/somatic/cgpwxs_v0.1.nf ."
     cmd2 = "cp DNAseq/Exome/somatic/mutect2_individual.nf ."
     os.system(cmd1)
-    os.system(cmd2) ########## put in another elif when you have RNA-seq pipeline ready
+    os.system(cmd2)
+elif data['samples'].lower() == 'rna-seq':
+    ### NEEDS inputs..
 else:
     raise SyntaxError('incorrect "variant" values input in master_user_config.yaml')
 
