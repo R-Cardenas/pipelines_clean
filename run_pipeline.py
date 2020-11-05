@@ -4,6 +4,7 @@
 import os
 import sys
 import subprocess
+import glob
 sys.path.append("python-packages/pyyaml")
 import yaml
 try:
@@ -93,6 +94,8 @@ elif data['samples'].lower() == 'dna-exome' and data['variant'] == 'somatic':
     os.system(cmd2)
 elif data['samples'].lower() == 'rna-seq':
     variant_nf = "nextflow run nfcore-rnaseq-merge.nf"
+    cmd1 = "cp RNAseq/nfcore-rnaseq-merge.nf ."
+    os.system(cmd1)
 else:
     raise SyntaxError('incorrect "variant" values input in master_user_config.yaml')
 
@@ -122,12 +125,26 @@ else:
 
 # Input fastqs
 fastq_input = data['fastq_dir']
-add_inputDir = f"""find . -name "*.nf" -exec sed -i 's/params.fq*.*/params.fq = \"{fastq_input}"/g' {{}} \;""" # add inputdir to all nf files
-os.system(add_inputDir)
+remove_inputDir = f"""find . -name "*.nf" -exec sed -i '/params.fq*/d' {{}} \;"""
+print(remove_inputDir)
+os.system(remove_inputDir)
 
 # Output dir (not for rna-seq - see rnaseq.py)
 output_base = data['output_dir']
-add_outputDir = f"""find . -name "*.nf" -exec sed -i 's/params.outputdir*.*/params.outputdir = \"{output_base}"/g' {{}} \;""" # add outputdir to all nf files
+remove_outputDir = f"""find . -name "*.nf" -exec sed -i '/params.outputdir*/d' {{}} \;"""
+print(remove_outputDir)
+os.system(remove_outputDir)
+
+# Add input and output dirs back in with YAML input:
+input1 = f"""params.fq = \"{fastq_input}\" \n"""
+output1 =  f"""params.outputdir = \"{output_base}\" \n"""
+
+nf_files = glob.glob("*.nf")
+for f in nf_files:
+    file_object = open(f, 'a')
+    file_object.write(input1)
+    file_object.write(output1)
+    file_object.close()
 
 ############
 ### RUN ###
@@ -140,5 +157,7 @@ output = subprocess.Popen(run_master, stdout=subprocess.PIPE ).communicate()[0]
 print(output)
 
 ## Remove the nextflow files that were copied to keep clean
-cp_nf = 'rm -fr *.nf'
-os.system(cp_nf)
+#cp_nf = 'rm -fr *.nf'
+#os.system(cp_nf)
+
+exit()
