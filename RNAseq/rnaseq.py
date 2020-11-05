@@ -42,11 +42,11 @@ else:
 # Select config files for hg19 or hg38
 if data['genome_assembly'] == 'hg38':
     rnaseq_genome = "--genome GRCh38 \\"
-    replace_string = f"sed -i 's/--genome .*/{refseq_genome}/g' nfcore-rnaseq*.nf'"
+    replace_string = f"sed -i 's/--genome .*/{rnaseq_genome}/g' nfcore-rnaseq*.nf'"
 
 elif data['genome_assembly'] == 'hg19':
     rnaseq_genome = "--genome GRCh37 \\"
-    replace_string = f"sed -i 's/--genome .*/{refseq_genome}/g' nfcore-rnaseq*.nf'"
+    replace_string = f"sed -i 's/--genome .*/{rnaseq_genome}/g' nfcore-rnaseq*.nf'"
 else:
     print('dna_exome.py - line24')
     raise SyntaxError("dna_exome.py: Incorrect 'genome_assembly' input. Please revise")
