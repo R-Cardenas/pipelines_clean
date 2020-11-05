@@ -126,7 +126,7 @@ add_inputDir = f"""find . -name "*.nf" -exec sed -i 's/params.fq*.*/params.fq = 
 os.system(add_inputDir)
 
 # Output dir (not for rna-seq - see rnaseq.py)
-fastq_input = data['output_dir']
+output_base = data['output_dir']
 add_outputDir = f"""find . -name "*.nf" -exec sed -i 's/params.outputdir*.*/params.outputdir = \"{output_base}"/g' {{}} \;""" # add outputdir to all nf files
 
 ############
