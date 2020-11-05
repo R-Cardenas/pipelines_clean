@@ -82,49 +82,6 @@ process indels_sort {
 
 }
 
-// you may want to repeat this  but to create the VCF files also
-process VEP2 {
-  storeDir "$baseDir/output/VCF_collect/merge_vcf/indels/family/VEP"
-  input:
-  file vcf from vep_ch.flatten()
-  output:
-  file "${vcf.baseName}_VEP.txt" into vep_filter_ch
-  script:
-  """
-  /ensembl-vep/vep -i ${vcf} \
-  --dir /var/spool/mail/VEP_hg38/.vep \
-  -o ${vcf.baseName}_VEP.txt \
-  --cache homo_sapiens \
-  --sift b \
-  --polyphen b \
-  --offline \
-  --fasta $genome_fasta \
-  --fork 5 \
-  --variant_class \
-  --af_gnomad \
-  --hgvs \
-  --domains \
-  --tab \
-  --show_ref_allele \
-  --symbol \
-  --nearest gene \
-  --no_stats \
-  --verbose
-  """
-}
-
-process vep_header {
-  storeDir "$baseDir/output/VCF_collect/split_vcf/VEP"
-  input:
-  file txt vep_filter_ch
-  output:
-  file "${txt.baseName}_noheader.txt"
-  script:
-  """
-  sed -i 's/#Uploaded_variation/Uploaded_variation/g' ${txt}
-  awk '!/\\#/' ${txt} > ${txt.baseName}_noheader.txt
-  """
-}
 
 // and VEP_fasta added
 // use pipeline bundle 1 has python3 installed
@@ -215,49 +172,4 @@ process snps_sort {
   rm -fr tmp
   """
 
-}
-
-// you may want to repeat this  but to create the VCF files also
-process VEP3 {
-
-  storeDir "$baseDir/output/VCF_collect/split_vcf/VEP"
-  input:
-  file vcf from vep2_ch.flatten()
-  output:
-  file "${vcf.baseName}_VEP.txt" into vep_filter2_ch
-  script:
-  """
-  /ensembl-vep/vep -i ${vcf} \
-  --dir /var/spool/mail/VEP_hg38/.vep \
-  -o ${vcf.baseName}_VEP.txt \
-  --cache homo_sapiens \
-  --sift b \
-  --polyphen b \
-  --offline \
-  --fasta $genome_fasta \
-  --fork 5 \
-  --variant_class \
-  --af_gnomad \
-  --hgvs \
-  --domains \
-  --tab \
-  --show_ref_allele \
-  --symbol \
-  --nearest gene \
-  --no_stats \
-  --verbose
-  """
-}
-
-process vep_header {
-  storeDir "$baseDir/output/VCF_collect/split_vcf/VEP"
-  input:
-  file txt vep_filter2_ch
-  output:
-  file "${txt.baseName}_noheader.txt"
-  script:
-  """
-  sed -i 's/#Uploaded_variation/Uploaded_variation/g' ${txt}
-  awk '!/\\#/' ${txt} > ${txt.baseName}_noheader.txt
-  """
 }

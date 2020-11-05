@@ -23,12 +23,19 @@
 
 projectname: 'Tumoroid'
 
+#2 Where are the FASTQ files stored? (e.g. /gpfs/data/CG_pipelines/example/input/*{1,2}.fq.gz)
+
+fastq_dir: ''
+
+#2 What is the outdir for results? (e.g. /gpfs/data/CG_pipelines/example/output)
+
+output_dir: ''
 
 #2 What samples are these? (i.e. dna-exome-germline, dna-wgs-germline, dna-exome-somatic, dna-wgs-somatic, rna-seq)
 
 samples: 'dna-exome'
 
-#3 If DNA variant analysis is to be conducted are they germline / somatic? (for RNA just leave empty)
+#3 If DNA variant analysis is to be conducted are they germline / somatic? (leave empty for RNA-seq)
 
 variant: 'germline'
 

@@ -33,6 +33,10 @@ rm_build = f"""for f in $(find . -name '*config'); do sed -i '/env.build/d' $f; 
 os.system(rm_projectname)
 os.system(rm_build)
 
+## Remove the nextflow files that may have been copied to baseDir
+cp_nf = 'rm -fr *.nf'
+os.system(cp_nf)
+
 #####################
 ### PROJECT NAME ####
 #####################
@@ -65,7 +69,7 @@ if data['samples'].lower() == 'dna-exome':
 elif data['samples'].lower() == 'dna-wgs':
     from DNAseq.WGS.dna_wgs import *
 elif data['samples'].lower() == 'rna-seq':
-     print('needs py file to be added')
+    from RNAseq.rnaseq import *
 else:
     raise SyntaxError('incorrect "samples" values input in master_user_config.yaml')
 
@@ -88,8 +92,7 @@ elif data['samples'].lower() == 'dna-exome' and data['variant'] == 'somatic':
     os.system(cmd1)
     os.system(cmd2)
 elif data['samples'].lower() == 'rna-seq':
-    ### NEEDS inputs..
-    print('needs ammending')
+    variant_nf = "nextflow run nfcore-rnaseq-merge.nf"
 else:
     raise SyntaxError('incorrect "variant" values input in master_user_config.yaml')
 
@@ -111,7 +114,20 @@ elif data['matched_identical'].lower() == 'no':
     print('Tumor/Normal samples do NOT identical names. Extracting from YAML file')
     from DNAseq.Exome.somatic.cgpwxs.samples_parse import *
 else:
-    raise SyntaxError('ERROR with sample names. Please check YAML #10 and #11')
+    pass # is not essential for germline / rna-seq
+
+##########################
+### Input & output Dir ### and out dir? - not for rna-seq
+########################## is different
+
+# Input fastqs
+fastq_dir = data['fastq_dir']
+add_inputDir = f"""find . -name "*.nf" -exec sed -i 's/params.fq*.*/params.fq = \"{fastq_input}"/g' {{}} \;""" # add inputdir to all nf files
+os.system(add_inputDir)
+
+# Output dir (not for rna-seq - see rnaseq.py)
+output_base = data['output_dir']
+add_outputDir = f"""find . -name "*.nf" -exec sed -i 's/params.outputdir*.*/params.outputdir = \"{output_base}"/g' {{}} \;""" # add outputdir to all nf files
 
 ############
 ### RUN ###
