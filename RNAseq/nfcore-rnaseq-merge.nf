@@ -30,7 +30,7 @@ process merge_lanes{
 	"""
 	module add python/anaconda/2019.10/3.7
 
-	python $baseDir/merge_fastq.py --fq '${fastq}'
+	python $baseDir/bin/python/merge_fastq.py --fq '${fastq}'
 
 	# remove non merged fastq files to conserve space
 	find . -type f ! -name '*-merged-*' -delete

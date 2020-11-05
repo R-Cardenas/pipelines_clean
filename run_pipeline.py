@@ -5,6 +5,8 @@ import os
 import sys
 import subprocess
 import glob
+import time
+from progressbar import progressbar
 sys.path.append("python-packages/pyyaml")
 import yaml
 try:
@@ -24,7 +26,20 @@ with open('master_user_config.yaml') as f:
 
 # Remove historical bash scripts
 rm_existing = "rm -fr run_selected_pipeline.sh"
-new_sh = "echo '#!/bin/bash' >> run_selected_pipeline.sh"
+
+SBATCH_header = """#!/bin/bash
+#SBATCH -p compute-24-128
+#SBATCH --output=test_%j.log
+#SBATCH -e test-%j.out
+#SBATCH -e test-%j.err
+#SBATCH -t 168:00:00
+#SBATCH --mem=2G
+
+module add nextflow
+module add singularity
+"""
+
+new_sh = f"echo '{SBATCH_header}' >> run_selected_pipeline.sh"
 os.system(rm_existing) ## should this be bsub? or slurm?
 os.system(new_sh)
 
@@ -102,7 +117,7 @@ else:
 
 ### Concat nextflow run and config into bash script in repo home Dir
 cgpmap_bash2 = "echo '" + variant_nf + "' >> run_selected_pipeline.sh"
-print(cgpmap_bash2)
+
 os.system(cgpmap_bash2)
 
 
@@ -125,26 +140,26 @@ else:
 
 # Input fastqs
 fastq_input = data['fastq_dir']
-remove_inputDir = f"""find . -name "*.nf" -exec sed -i '/params.fq*/d' {{}} \;"""
-print(remove_inputDir)
+remove_inputDir = f"""find . -name "*.nf" -exec sed -i '/params.fq = /d' {{}} \;"""
+
 os.system(remove_inputDir)
 
 # Output dir (not for rna-seq - see rnaseq.py)
 output_base = data['output_dir']
-remove_outputDir = f"""find . -name "*.nf" -exec sed -i '/params.outputdir*/d' {{}} \;"""
-print(remove_outputDir)
+remove_outputDir = f"""find . -name "*.nf" -exec sed -i '/params.outputdir = /d' {{}} \;"""
+
 os.system(remove_outputDir)
 
 # Add input and output dirs back in with YAML input:
-input1 = f"""params.fq = \"{fastq_input}\" \n"""
-output1 =  f"""params.outputdir = \"{output_base}\" \n"""
+input1 = f"""params.fq = \"{fastq_input}\""""
+output1 =  f"""params.outputdir = \"{output_base}\""""
 
 nf_files = glob.glob("*.nf")
 for f in nf_files:
-    file_object = open(f, 'a')
-    file_object.write(input1)
-    file_object.write(output1)
-    file_object.close()
+    os.system(f"""sed -i '1s|^|\\n|' {f}""")
+    os.system(f"""sed -i '1s|^|{input1}|' {f}""")
+    os.system(f"""sed -i '1s|^|\\n|' {f}""")
+    os.system(f"""sed -i '1s|^|{output1}|' {f}""")
 
 ############
 ### RUN ###
@@ -152,12 +167,17 @@ for f in nf_files:
 
 ### We will run whats in the run_selected_pipeline.sh once it is filled.
 
-run_master = ["bash","run_selected_pipeline.sh"]
+run_master = ["sbatch","run_selected_pipeline.sh"]
 output = subprocess.Popen(run_master, stdout=subprocess.PIPE ).communicate()[0]
+print("Job submitted - details below:")
 print(output)
 
+for i in progressbar(range(100)):
+    time.sleep(0.07)
+
 ## Remove the nextflow files that were copied to keep clean
-#cp_nf = 'rm -fr *.nf'
-#os.system(cp_nf)
+cp_nf = 'rm -fr *.nf'
+os.system(cp_nf)
+print("Pipeline has been sucessfully submitted")
 
 exit()
