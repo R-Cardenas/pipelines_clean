@@ -46,7 +46,7 @@ process main_nf{
 	script:
 	"""
 	nextflow run nf-core/rnaseq \
-	-c /gpfs/afm/cg_pipelines/Pipelines/singularity/nextflow_configs/rna-seq_v2.6.1.config \
+	--custom_config_base /gpfs/afm/cg_pipelines/Pipelines/singularity/nextflow_configs/rna-seq_v2.6.1.config \
 	-profile singularity \
 	--reads '*{1,2}.{fastq,fq}.gz' \
 	--genome GRCh37 \
