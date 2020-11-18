@@ -40,6 +40,9 @@ process BaseRecalibrator {
   --known-sites $GATK_dbsnp138 \
   --known-sites $GATK_1000G \
   --known-sites $GATK_mills \
+	--read-index /var/spool/mail/hg19_GRCh37d5/GATK_rosource/dbsnp_138.b37.vcf.idx.gz \
+	--read-index /var/spool/mail/hg19_GRCh37d5/GATK_rosource/1000G_phase1.snps.high_confidence.b37.vcf.idx.gz \
+	--read-index /var/spool/mail/hg19_GRCh37d5/GATK_rosource/Mills_and_1000G_gold_standard.indels.b37.vcf.idx.gz \
   -O ${bam}.table \
 	--tmp-dir tmp
 

@@ -29,32 +29,18 @@ println """\
 
 
 process cgpMAP {
-
-
-	storeDir "$baseDir/output/cgpMAP/${read1.simpleName}"
+	stageInMode = "copy" // trim_galore doesnt like sym/hardlinks.
   input:
-	val read1 from read5_ch
+	tuple val(read2), file(reads) from read1_ch
   output:
   file "*.bam" into cgp_ch
   script:
   """
-
-  name=\$(echo '${read2}' | sed -e 's/.*[/]//' -e 's/_.*//')
-
-  ds-cgpmap.pl  \
-  -outdir $baseDir/output/cgpMAP/${read1.simpleName} \
+	ds-cgpmap.pl  \
   -r $cgpmap_genome \
   -i $cgpmap_index \
-  -s \$name \
-  -t 5 \
-	-g ${read1}.yaml \
-  ${read1} ${read2}
-
-	mv $baseDir/output/cgpMAP/${read1.simpleName}/*.bam \
-	$baseDir/output/cgpMAP/${read1.simpleName}/${read1.simpleName}.bam
-
-	echo 'fq1: ${read1} fq2: ${read2} bam_name: ${read1.simpleName}' >> $baseDir/${projectname}_cgpmap_samples.log
-	ls -l  ${read1} >> $baseDir/logs/symbolic_test_fastq.log
-	ls -l  ${read2} >> $baseDir/logs/symbolic_test_fastq.log
+	-s ${read2} \
+	-t 5 \
+	${reads[0]} ${reads[1]}
   """
 }

@@ -35,8 +35,6 @@ result = myLongCmdline.execute().text
 
 
 process trim_galore{
-
-
 	stageInMode = 'copy' // trim_galore doesnt like sym/hardlinks.
   storeDir "$baseDir/output/cgpMAP/trim_galore"
 	input:
@@ -53,9 +51,11 @@ process trim_galore{
 	--basename ${reads[0].simpleName} \
 	${reads[0]} ${reads[1]}
 
+	# rename val with trim
 	mv ${reads[0].simpleName}_val_1.fq.gz ${reads[0].simpleName}_1.trim.fq.gz
 	mv ${reads[0].simpleName}_val_2.fq.gz ${reads[0].simpleName}_2.trim.fq.gz
 
+	# delete copied files
 	rm -fr ${reads[0]} # remove the copied files to prevent memory loss
 	rm -fr ${reads[1]}
 	"""
