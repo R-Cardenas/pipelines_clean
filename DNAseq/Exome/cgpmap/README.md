@@ -74,6 +74,8 @@ Next a python script is used to form a YAML file in the correct format for cgpMA
 
 This script assumes the platform unit is Illumina, and will add the sample name obtained from the fastq filename (E.g. S0102-P-TUMOR-L01-R1.fastq.gz sample name is S0102-P).
 
+If the txt file is still empty due to a malformed header, python will insert generic inputs into the YAML. As this may affect the QC of BAMs, a warning is produced by the python script and is moved to the logs folder.
+
 ```bash
 python $baseDir/nextflow_pipelines/bin/python/fastq2config_cgpmap.py \
 --fq1 ${read1.simpleName}.txt --fq2 ${read2.simpleName}.txt \
@@ -95,4 +97,79 @@ READGRPS:
     PL: ILLUMINA
     LB: HGYYCBBXX_NTTCCT
     PU: HGYYCBBXX.6
+```
+
+## cgpMAP
+
+The cgpMAP process receives inputs from two processes. The trimmed fastq files (read1,read2) from trim_galore and the YAML config file from fastQ.
+
+```go
+storeDir "$baseDir/output/cgpMAP/${read1.simpleName}"
+input:
+val read1 from read5_ch
+val read2 from read10_ch
+val yaml from yaml_ch.collect()
+
+```
+
+The following step will run cgpMAP. The name is first extracted from the trimmed fastq filename ($name).
+
+Then the cgpMAP tool is called (ds-cgpmap.pl) and inserts the corresponding inputs. The following variables can be found in the /DNAseq/Exome/cgpmap/cgpmap_hg{19,38}.config:
+
+  *cgpmap_genome
+  *gpmap_index
+
+For more information how cgpMAP works visit: https://github.com/cancerit/dockstore-cgpmap.
+
+CgpMAP creates a folder with all the output files into a seperate folder. However, nextflow is expecting the files in a particular folder so it can be passed onto the next process. Therefore following the ds-cgpmap.pl the BAM files are moved one level below.
+
+To ensure the correct fastq pairs have been used, the read1 and read2 variable are recorded into a text file and logged in ${projectname}_cgpmap_samples.log.
+
+
+```sh
+name=\$(echo '${read2}' | sed -e 's/.*[/]//' -e 's/_.*//')
+
+ds-cgpmap.pl  \
+-outdir $baseDir/output/cgpMAP/${read1.simpleName} \
+-r $cgpmap_genome \
+-i $cgpmap_index \
+-s \$name \
+-t 5 \
+-g ${read1}.yaml \
+${read1} ${read2}
+
+mv $baseDir/output/cgpMAP/${read1.simpleName}/*.bam \
+$baseDir/output/cgpMAP/${read1.simpleName}/${read1.simpleName}.bam
+
+echo 'fq1: ${read1} fq2: ${read2} bam_name: ${read1.simpleName}' >> $baseDir/${projectname}_cgpmap_samples.log
+ls -l  ${read1} >> $baseDir/logs/symbolic_test_fastq.log
+ls -l  ${read2} >> $baseDir/logs/symbolic_test_fastq.log
+
+```
+
+# Merge BAMs
+
+This is relevant for the dna-exome-merge.nf pipeline. Nextflow will wait until all of the files from the previous process has completed and pool them for this process.
+The script below describes collecting these files.
+
+```sh
+input:
+file bam from bam_merge_ch.collect()
+```
+
+The next script extracts the sample name from the bam files (using sed), sort them, and only use unique sample names (uniq) in the for loop.
+
+Using the sample name and wildcard samtools is used to merge BAMs from different lanes but containing the same sample name.
+
+```sh
+# This will extract the sample name and create a samtools wild card
+for f in \$(ls *.bam | sed -e 's/.*[/]//' -e 's/_.*//' | sort | uniq)
+do
+samtools merge \${f}_merged.bam \${f}*
+
+# documents the samples used for merging into log
+printf "`echo \${f}` `echo $(ls \${f}*)`\\n" >> $baseDir/logs/bam_merge_log.txt
+
+done
+
 ```

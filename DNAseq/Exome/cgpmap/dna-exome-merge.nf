@@ -75,10 +75,11 @@ process fqtools{
 	file("fqtools_WARNING_?.txt") optional true
 	script:
 	"""
+	# Read1
+	# Extract header
 	fqtools -d header ${read1} | grep ":[C,A,T,G]*[+][C,A,T,G]" | head -1 > ${read1.simpleName}.txt
 
 	### Counts lines in file1 and will repeat if it is empty
-
   words=`wc -l ${read1.simpleName}.txt  | awk '{print \$1}'`;
 	if [ \$words -eq 0 ]
 	then
@@ -87,9 +88,12 @@ process fqtools{
 	echo 'alls good!'
 	fi
 
-	### Counts lines in file2 and will repeat if it is empty
+	# Read2
+	# Extract header
 
   fqtools -d header ${read2} | grep ":[C,A,T,G]*[+][C,A,T,G]" | head -1 > ${read2.simpleName}.txt
+
+	### Counts lines in file2 and will repeat if it is empty
 	words=`wc -l ${read2.simpleName}.txt  | awk '{print \$1}'`;
 	if [ \$words -eq 0 ]
 	then
@@ -98,10 +102,12 @@ process fqtools{
 	echo 'alls good!'
 	fi
 
-	cp *WARNING* $baseDir/logs 2>/dev/null || :
+
 	python $baseDir/nextflow_pipelines/bin/python/fastq2config_cgpmap.py \
 	--fq1 ${read1.simpleName}.txt --fq2 ${read2.simpleName}.txt \
 	--n1 ${read1} --n2 ${read2} --o ${read1}.yaml
+
+	cp *WARNING* $baseDir/logs 2>/dev/null || :
 	"""
 }
 
@@ -149,6 +155,8 @@ process sam_sort {
   file "${bam.simpleName}.sorted.bam" into bam_merge_ch
   script:
   """
+	# create the tmp file as picard can create large temp files
+
 	mkdir -p tmp
   picard SortSam I=${bam} O=${bam.simpleName}.sorted.bam SORT_ORDER=coordinate TMP_DIR=tmp
 	TMP_DIR=tmp
@@ -165,10 +173,21 @@ process bam_merge {
 	file "*_merged.bam" into dup_ch
   script:
   """
+	# Create log file
+	echo '#RPC bam_merge logs from dna-exome-merge' >> $baseDir/logs/bam_merge_log.txt
+	echo '#All sample names on one line are expected to be the same. Otherwise a bug has occured' >> $baseDir/logs/bam_merge_log.txt
+	echo 'wild_card samples' >> $baseDir/logs/bam_merge_log.txt
+
+	# Samtools MERGE
+	# This will extract the sample name and create a samtools wild card
 	for f in \$(ls *.bam | sed -e 's/.*[/]//' -e 's/_.*//' | sort | uniq)
 	do
 	samtools merge \${f}_merged.bam \${f}*
+
+	printf "`echo \${f}` `echo $(ls \${f}*)`\\n" >> $baseDir/logs/bam_merge_log.txt
+
 	done
+
   """
 }
 
