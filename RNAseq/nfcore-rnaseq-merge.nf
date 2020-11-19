@@ -37,23 +37,21 @@ process merge_lanes{
 	"""
 }
 
+// needs to be tested
 process main_nf{
 	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
 	maxRetries 6
 	executor 'slurm'
 	memory '55 GB'
-	storeDir "$baseDir/main_outputs"
 	input:
-	file fastq from main_ch.collect()
-	output:
-	file '*'
+	val fastq from main_ch.collect()
 	script:
 	"""
 	nextflow run nf-core/rnaseq -resume -profile singularity \
 	-c /gpfs/afm/cg_pipelines/Pipelines/singularity/nextflow_configs/UEA.config \
 	--reads '*{1,2}.{fastq,fq}.gz' \
 	--genome GRCh37 \
-	--outdir 'test' \
+	--outdir '$baseDir/test' \
 	--max_memory '55.GB' \
 	--saveAlignedIntermediates \
 	--saveTrimmed \

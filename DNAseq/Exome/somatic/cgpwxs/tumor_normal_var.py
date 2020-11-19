@@ -23,7 +23,7 @@ print("Historical tumor/normal samples deleted from configs")
 ## samples ##
 #############
 
-files = sorted(glob.glob('input/*.bam'))
+files = sorted(glob.glob('input/*.{bam,fq.gz,fastq.gz}'))
 
 
 tumor_final = list()
@@ -32,6 +32,8 @@ normal_final = list()
 for f in files:
     Alist = f.replace('input/','') # remove path
     Alist = Alist.replace('.bam','') # remove file ext
+    Alist = Alist.replace('.fq.gz','') # remove file ext
+    Alist = Alist.replace('.fastq.gz','') # remove file ext
     Alist = Alist.split("-")
 
     sample = Alist[0].upper() # extract samples name

@@ -6,7 +6,7 @@ import sys
 import subprocess
 import glob
 import time
-from progressbar import progressbar
+
 sys.path.append("python-packages/pyyaml")
 import yaml
 try:
@@ -172,8 +172,8 @@ run_master = ["sbatch","run_selected_pipeline.sh"]
 print("Job submitted - details below:")
 #print(output)
 
-for i in progressbar(range(100)):
-    time.sleep(0.07)
+#for i in progressbar(range(100)):
+#    time.sleep(0.07)
 
 ## Remove the nextflow files that were copied to keep clean
 #cp_nf = 'rm -fr *.nf'

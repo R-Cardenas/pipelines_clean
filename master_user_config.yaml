@@ -78,7 +78,7 @@ af: '0.1'
 #1 Allele frequency proportion?? ## !! NEEDS ADDING !!!
 
 #10 Do TUMOUR/NORMAL matched samples have identical sample names? (e.g. S101-TUMOUR-UID.fq.gz & S101-NORMAL-UID.fq.gz)
-# If the answer below is 'yes' then you can leave #11 blank.
+# If the answer below is 'yes' then leave #11 blank.
 
 matched_identical: 'no'
 
