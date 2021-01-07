@@ -116,9 +116,7 @@ elif data['samples'].lower() == 'dna-exome' and data['variant'] == 'somatic':
     os.system(cmd1)
     os.system(cmd2)
 elif data['samples'].lower() == 'rna-seq':
-    variant_nf = "nextflow run nfcore-rnaseq-merge.nf"
-    cmd1 = "cp RNAseq/nfcore-rnaseq-merge.nf ."
-    os.system(cmd1)
+    variant_nf = "nextflow run nfcore-rnaseq-merge.nf -c /RNAseq/expression/nextflow.config"
 else:
     raise SyntaxError('incorrect "variant" values input in master_user_config.yaml')
 
@@ -181,11 +179,11 @@ print("Job submitted - details below:")
 print(output)
 
 #for i in progressbar(range(100)):
-#    time.sleep(0.07)
+time.sleep(0.07)
 
 ## Remove the nextflow files that were copied to keep clean
-cp_nf = 'rm -fr *.nf'
-os.system(cp_nf)
+#cp_nf = 'rm -fr *.nf'
+#ßos.system(cp_nf)
 print("Pipeline has been sucessfully submitted")
 
 exit()
