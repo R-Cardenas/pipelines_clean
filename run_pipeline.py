@@ -98,15 +98,20 @@ if data['samples'].lower() == 'dna-exome' and data['variant'] == 'germline':
                  "nextflow run haplotypecaller_individual.nf"
     cmd1 = "cp DNAseq/Exome/germline/freebayes/freebayes_individual.nf ."
     cmd2 = "cp DNAseq/Exome/germline/gatk/haplotypecaller_individual.nf ."
-    os.system(cmd1)
-    os.system(cmd2)
+    p = subprocess.run(cmd1, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+    print(p)
+    p = subprocess.run(cmd1, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+    print(p)
+
 elif data['samples'].lower() == 'dna-exome' and data['variant'] == 'somatic':
     variant_nf = "nextflow run cgpwxs_v0.1.nf & \"" \
                  "nextflow run mutect2_individual.nf"
     cmd1 = "cp DNAseq/Exome/somatic/cgpwxs_v0.1.nf ."
     cmd2 = "cp DNAseq/Exome/somatic/mutect2_individual.nf ."
-    os.system(cmd1)
-    os.system(cmd2)
+    p = subprocess.run(cmd1, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+    print(p)
+    p = subprocess.run(cmd1, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+    print(p)
 elif data['samples'].lower() == 'rna-seq':
     from RNAseq.expression.rnaseq import variant_nf
 else:
@@ -162,10 +167,9 @@ for f in nf_files:
 ### RUN ###
 ###########
 
-### We will run whats in the run_selected_pipeline.sh once it is filled.
 
 run_master = ["sbatch","run_selected_pipeline.sh"]
-output = subprocess.Popen(run_master, stdout=subprocess.PIPE ).communicate()[0]
+output = subprocess.Popen(run_master, stdout=subprocess.PIPE, check=True).communicate()[0]
 print("Job submitted - details below:")
 print(output)
 
