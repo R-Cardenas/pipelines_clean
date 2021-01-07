@@ -16,13 +16,13 @@ import subprocess
 if data['merged_lanes'] == 'no':
     variant_nf = "nextflow run nfcore-rnaseq-nomerge.nf -c RNAseq/expression/nextflow.config"
     cmd = "cp RNAseq/expression/nfcore-rnaseq-nomerge.nf ."
-    subprocess.call(cmd, shell=True,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.call(cmd, shell=True,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if p.returncode != 0:
         raise SyntaxError("ERROR BASH: cp RNAseq/expression/nfcore-rnaseq-nomerge.nf")
 elif data['merged_lanes'] == 'yes':
     variant_nf = "nextflow run nfcore-rnaseq-merge.nf -c RNAseq/expression/nextflow.config"
     cmd = "cp RNAseq/expression/nfcore-rnaseq-merge.nf ."
-    subprocess.call(cmd, shell=True,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.call(cmd, shell=True,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if p.returncode != 0:
         raise SyntaxError("ERROR BASH: cp RNAseq/expression/nfcore-rnaseq-merge.nf")
 else:
