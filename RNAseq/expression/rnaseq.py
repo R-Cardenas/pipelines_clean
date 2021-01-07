@@ -7,6 +7,24 @@ import os
 from run_pipeline import data
 import glob
 
+
+#################
+## MERGE LANES ##
+#################
+
+# Select merge or no merge nextflow
+if data['merged_lanes'] == 'no':
+    variant_nf = "nextflow run dna-exome-nomerge.nf -c RNAseq/expression/nextflow.config"
+    cmd = "cp RNAseq/expression/nfcore-rnaseq-nomerge.nf ."
+    os.system(cmd)
+elif data['merged_lanes'] == 'yes':
+    variant_nf = "nextflow run dna-exome-merge.nf -c RNAseq/expression/nextflow.config"
+    cmd = "cp RNAseq/expression/nfcore-rnaseq-merge.nf ."
+    os.system(cmd)
+else:
+    print('dna_exome.py - line10')
+    raise SyntaxError("dna_exome.py: Incorrect 'merged_lanes' input. Please revise")
+
 ########################
 ## Output Dir         ##
 ########################
@@ -18,22 +36,6 @@ else:
     output_dir2 = "--outdir " + output_dir + " \\"
     replace_string = f"sed -i 's/--outdir .*/{output_dir2}/g' nfcore-rnaseq*.nf'" # replace rna-seq nf with YAML input
     os.system(replace_string)
-#################
-## MERGE LANES ##
-#################
-
-# Select merge or no merge nextflow
-if data['merged_lanes'] == 'no':
-    cgpmap_nf = "nextflow run dna-exome-nomerge.nf"
-    cmd = "cp RNAseq/expression/nfcore-rnaseq-nomerge.nf ."
-    os.system(cmd)
-elif data['merged_lanes'] == 'yes':
-    cgpmap_nf = "nextflow run dna-exome-merge.nf"
-    cmd = "cp RNAseq/expression/nfcore-rnaseq-merge.nf ."
-    os.system(cmd)
-else:
-    print('dna_exome.py - line10')
-    raise SyntaxError("dna_exome.py: Incorrect 'merged_lanes' input. Please revise")
 
 ###################
 ## Genome Config ##
