@@ -31,6 +31,10 @@ fastq_dir: ''
 
 output_dir: ''
 
+# Are you running from BAMs only? (i.e. not using fastq files put YES if using BAMS, NO for fastq)
+
+bams_only: ''
+
 #2 What samples are these? (i.e. dna-exome-germline, dna-wgs-germline, dna-exome-somatic, dna-wgs-somatic, rna-seq)
 
 samples: 'dna-exome'

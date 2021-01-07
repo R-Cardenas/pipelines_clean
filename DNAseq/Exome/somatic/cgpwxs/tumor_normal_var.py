@@ -12,7 +12,7 @@ import glob
 ## Housekeeping ##
 ##################
 
-# delete tumor/normal environment variables
+# delete tumor/normal environment variables in all config files in pipelines_clean
 rm_tumor = f"""for f in $(find . -name '*config'); do sed -i '/params.normal/d' $f; done"""
 rm_normal = f"""for f in $(find . -name '*config'); do sed -i '/params.tumor /d' $f; done"""
 os.system(rm_tumor)
@@ -23,8 +23,8 @@ print("Historical tumor/normal samples deleted from configs")
 ## samples ##
 #############
 
-files = sorted(glob.glob('input/*.{bam,fq.gz,fastq.gz}'))
-
+files = sorted(glob.glob('input/*.{bam,fq.gz,fastq.gz,cram}'))
+raise SyntaxError("input Dir is empty") if len(files) == 0 else print('files identified in input folder')
 
 tumor_final = list()
 normal_final = list()
@@ -34,6 +34,7 @@ for f in files:
     Alist = Alist.replace('.bam','') # remove file ext
     Alist = Alist.replace('.fq.gz','') # remove file ext
     Alist = Alist.replace('.fastq.gz','') # remove file ext
+    Alist = Alist.replace('.cram','') # remove file ext
     Alist = Alist.split("-")
 
     sample = Alist[0].upper() # extract samples name

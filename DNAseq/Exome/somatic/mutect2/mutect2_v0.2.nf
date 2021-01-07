@@ -29,37 +29,34 @@ println """\
 
 
 process BaseRecalibrator {
-  storeDir "$baseDir/output/mutect2/aligned_sorted"
+	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 6
+  storeDir "$baseDir/output/GATK_haplotypeCaller"
   input:
-  file pair_read_4 from bam2_ch
+  file bam from bam2_ch
   output:
-  file "${pair_read_4.simpleName}_calibration.table" into table_ch
+  file "${bam.simpleName}.BQSR.bam" into (mutect2_1_ch,mutect2_2_ch,pileup_ch)
+	file "${bam}.table"
   script:
   """
+	mkdir -p tmp
   gatk BaseRecalibrator \
-  -I ${pair_read_4} \
-	-R $genome_fasta \
+	-I ${bam} \
+  -R $genome_fasta \
   --known-sites $GATK_dbsnp138 \
   --known-sites $GATK_1000G \
   --known-sites $GATK_mills \
-  -O ${pair_read_4.simpleName}_calibration.table
-  """
-}
+  -O ${bam}.table \
+	--tmp-dir tmp
 
-process applyBaseRecalibrator {
-  storeDir "$baseDir/output/mutect2/aligned_sorted"
-  input:
-  file pair_read_5 from table_ch
-  file pair_read_6 from bam3_ch
-  output:
-  file "${pair_read_6.simpleName}.BQSR.bam" into (mutect2_1_ch, mutect2_2_ch, pileup_ch)
-  script:
-  """
-  gatk ApplyBQSR \
-	-R $genome_fasta \
-  -I ${pair_read_6} \
-  --bqsr-recal-file ${pair_read_5} \
-  -O ${pair_read_6.simpleName}.BQSR.bam
+	gatk ApplyBQSR \
+  -R $genome_fasta \
+  -I ${bam} \
+  --bqsr-recal-file ${bam}.table \
+  -O ${bam.simpleName}.BQSR.bam \
+	--tmp-dir tmp
+	rm -fr tmp
+
   """
 }
 
@@ -74,6 +71,16 @@ process mutect2 {
   file "${x}vs${y}.vcf.gz" into filter_vcf_ch
   script:
   """
+	mkdir -p tmp
+	gatk BuildBamIndex \
+	-I ${x}.bam \
+	-O ${x}.bam.bai \
+	--TMP_DIR tmp
+	gatk BuildBamIndex \
+	-I ${y}.bam \
+	-O ${y}.bam.bai \
+	--TMP_DIR tmp
+
   gatk Mutect2 \
 	-R $genome_fasta \
   -I ${x}.bam \
@@ -96,6 +103,7 @@ process pileup_summary{
 	gatk GetPileupSummaries \
 	-I ${bam} \
 	-V $Mutect2_germline \
+	-L $Mutect2_germline \
 	-O ${bam.simpleName}.getpileupsummaries.table
 	"""
 }

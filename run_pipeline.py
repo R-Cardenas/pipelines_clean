@@ -75,23 +75,31 @@ os.system(add_build)
 
 
 
-#####################
-### EXOME VS WGS ####
-#####################
+#################################################
+### EXOME VS WGS VS RNA-seq --- MAPPING ONLY ####
+#################################################
 
-# The next chunk identifies data type and then imports the python script specific for the datatype e.g. exome
-if data['samples'].lower() == 'dna-exome':
-    from DNAseq.Exome.cgpmap.dna_exome import *
-elif data['samples'].lower() == 'dna-wgs':
-    from DNAseq.WGS.dna_wgs import *
-elif data['samples'].lower() == 'rna-seq':
-    from RNAseq.rnaseq import *
+# If BAMs only is yes. The cgpMAP module/ python scripts are not called.
+if data['bams_only'].lower() == 'yes':
+    print("Using bams only, ommitting cgpMAP module")
+elif data['bams_only'].lower() == 'no':
+    # The next chunk identifies data type and then imports the python script specific for the datatype e.g. exome
+    if data['samples'].lower() == 'dna-exome':
+        from DNAseq.Exome.cgpmap.dna_exome import *
+    elif data['samples'].lower() == 'dna-wgs':
+        from DNAseq.WGS.dna_wgs import *
+    elif data['samples'].lower() == 'rna-seq':
+        from RNAseq.rnaseq import *
+    else:
+        raise SyntaxError('incorrect "samples" values input in master_user_config.yaml')
 else:
-    raise SyntaxError('incorrect "samples" values input in master_user_config.yaml')
+    raise SyntaxError('Unrecognisable input for bams_only in master_user_config.yaml please revise')
 
 ###########################
 ### SOMATIC VS GERMLINE ###
 ###########################
+
+## You need to put in WGS
 
 if data['samples'].lower() == 'dna-exome' and data['variant'] == 'germline':
     variant_nf = "nextflow run freebayes_individual.nf & \"" \
