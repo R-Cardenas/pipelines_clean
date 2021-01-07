@@ -25,11 +25,11 @@ else:
 # Select merge or no merge nextflow
 if data['merged_lanes'] == 'no':
     cgpmap_nf = "nextflow run dna-exome-nomerge.nf"
-    cmd = "cp RNAseq/nfcore-rnaseq-nomerge.nf ."
+    cmd = "cp RNAseq/expression/nfcore-rnaseq-nomerge.nf ."
     os.system(cmd)
 elif data['merged_lanes'] == 'yes':
     cgpmap_nf = "nextflow run dna-exome-merge.nf"
-    cmd = "cp RNAseq/nfcore-rnaseq-merge.nf ."
+    cmd = "cp RNAseq/expression/nfcore-rnaseq-merge.nf ."
     os.system(cmd)
 else:
     print('dna_exome.py - line10')

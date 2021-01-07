@@ -89,7 +89,7 @@ elif data['bams_only'].lower() == 'no':
     elif data['samples'].lower() == 'dna-wgs':
         from DNAseq.WGS.dna_wgs import *
     elif data['samples'].lower() == 'rna-seq':
-        from RNAseq.rnaseq import *
+        from RNAseq.expression.rnaseq import *
     else:
         raise SyntaxError('incorrect "samples" values input in master_user_config.yaml')
 else:
@@ -176,16 +176,16 @@ for f in nf_files:
 ### We will run whats in the run_selected_pipeline.sh once it is filled.
 
 run_master = ["sbatch","run_selected_pipeline.sh"]
-#output = subprocess.Popen(run_master, stdout=subprocess.PIPE ).communicate()[0]
+output = subprocess.Popen(run_master, stdout=subprocess.PIPE ).communicate()[0]
 print("Job submitted - details below:")
-#print(output)
+print(output)
 
 #for i in progressbar(range(100)):
 #    time.sleep(0.07)
 
 ## Remove the nextflow files that were copied to keep clean
-#cp_nf = 'rm -fr *.nf'
-#os.system(cp_nf)
+cp_nf = 'rm -fr *.nf'
+os.system(cp_nf)
 print("Pipeline has been sucessfully submitted")
 
 exit()
