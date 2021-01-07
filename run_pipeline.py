@@ -119,7 +119,7 @@ elif data['samples'].lower() == 'dna-exome' and data['variant'] == 'somatic':
     os.system(cmd1)
     os.system(cmd2)
 elif data['samples'].lower() == 'rna-seq':
-    pass
+    from RNAseq.expression.rnaseq import variant_nf
 else:
     raise SyntaxError('incorrect "variant" values input in master_user_config.yaml')
 
