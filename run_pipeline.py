@@ -168,10 +168,10 @@ for f in nf_files:
 ###########
 
 
-run_master = ["sbatch","run_selected_pipeline.sh"]
-output = subprocess.Popen(run_master, stdout=subprocess.PIPE, check=True).communicate()[0]
+run_master = ["sbatch run_selected_pipeline.sh"]
+p = subprocess.run(run_master, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
 print("Job submitted - details below:")
-print(output)
+print(p.stdout)
 
 #for i in progressbar(range(100)):
 time.sleep(0.07)
