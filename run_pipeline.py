@@ -115,7 +115,6 @@ else:
 
 ### Concat nextflow run and config into bash script in repo home Dir
 cgpmap_bash2 = "echo '" + variant_nf + "' >> run_selected_pipeline.sh"
-
 os.system(cgpmap_bash2)
 
 

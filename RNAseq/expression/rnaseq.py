@@ -35,6 +35,7 @@ else:
     output_dir2 = "--outdir " + output_dir + " \\"
     replace_string = f"sed -i 's/--outdir .*/{output_dir2}/g' nfcore-rnaseq*.nf'" # replace rna-seq nf with YAML input
     os.system(replace_string)
+    print('updated output_dir...')
 
 ###################
 ## Genome Config ##
@@ -45,11 +46,15 @@ if data['genome_assembly'] == 'hg38':
     rnaseq_genome = "--genome GRCh38 \\"
     replace_string = f"sed -i 's/--genome .*/{rnaseq_genome}/g' nfcore-rnaseq*.nf'"
     os.system(replace_string)
+    print('Updated genome to hg38')
 
 elif data['genome_assembly'] == 'hg19':
     rnaseq_genome = "--genome GRCh37 \\"
     replace_string = f"sed -i 's/--genome .*/{rnaseq_genome}/g' nfcore-rnaseq*.nf'"
     os.system(replace_string)
+    print('Updated genome to hg19')
 else:
     print('dna_exome.py - line24')
     raise SyntaxError("dna_exome.py: Incorrect 'genome_assembly' input. Please revise")
+
+print('RNAseq module completed')
