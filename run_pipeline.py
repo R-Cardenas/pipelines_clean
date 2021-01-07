@@ -85,10 +85,13 @@ if data['bams_only'].lower() == 'yes':
 elif data['bams_only'].lower() == 'no':
     # The next chunk identifies data type and then imports the python script specific for the datatype e.g. exome
     if data['samples'].lower() == 'dna-exome':
+        print('Loading DNA exome module \n')
         from DNAseq.Exome.cgpmap.dna_exome import *
     elif data['samples'].lower() == 'dna-wgs':
+        print('Loading DNA WGS module \n')
         from DNAseq.WGS.dna_wgs import *
     elif data['samples'].lower() == 'rna-seq':
+        print('Loading RNA-seq module \n')
         from RNAseq.expression.rnaseq import *
     else:
         raise SyntaxError('incorrect "samples" values input in master_user_config.yaml')
@@ -116,7 +119,7 @@ elif data['samples'].lower() == 'dna-exome' and data['variant'] == 'somatic':
     os.system(cmd1)
     os.system(cmd2)
 elif data['samples'].lower() == 'rna-seq':
-    variant_nf = "nextflow run nfcore-rnaseq-merge.nf -c /RNAseq/expression/nextflow.config"
+    pass
 else:
     raise SyntaxError('incorrect "variant" values input in master_user_config.yaml')
 
