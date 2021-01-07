@@ -4,9 +4,9 @@
 import os
 # RPC 080720
 # aft19qdu@uea.ac.uk
-from run_pipeline import data
-import glob
 
+import glob
+from bin.python.data_yaml import data
 
 #################
 ## MERGE LANES ##
