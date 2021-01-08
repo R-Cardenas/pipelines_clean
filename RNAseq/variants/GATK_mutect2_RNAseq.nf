@@ -132,7 +132,6 @@ process filter_vcf {
 	storeDir "$baseDir/output/mutect2/mutect2/filtered_vcf"
 	input:
 	file vcf from filter_vcf_ch
-	file table from filter_vcf2_ch
 	output:
 	file "${vcf.simpleName}.filtered.vcf" into zip_ch
 	script:
@@ -140,7 +139,6 @@ process filter_vcf {
 	gatk FilterMutectCalls \
 	-R $genome_fasta \
 	-V ${vcf}  \
-	--contamination-table ${table} \
 	-O ${vcf.simpleName}.filtered.vcf
 	"""
 }
