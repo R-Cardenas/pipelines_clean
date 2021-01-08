@@ -43,6 +43,7 @@ process SplitNCigarReads {
 
   script:
   """
+	chmod 777 ${bam}
 gatk SplitNCigarReads \
       -R $genome_fasta \
       -I ${bam} \
