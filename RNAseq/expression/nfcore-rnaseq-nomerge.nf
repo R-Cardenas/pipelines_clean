@@ -2,7 +2,7 @@
  * create a channel for bam files produced by cgpmap_processing pipeline
  */
 params.outputdir = "/gpfs/afm/cg_pipelines/Pipelines/Williams_RNASeq_processing"
-params.fq = "/gpfs/afm/cg_pipelines/Pipelines/Williams_RNASeq/*{fq,fastq}.gz"
+params.fq = "$baseDir/input/*{fq,fastq}.gz"
 fq_ch = Channel .fromPath( params.fq )
 
 println """\
@@ -26,12 +26,12 @@ process main_nf{
 	executor 'slurm'
 	memory '55 GB'
 	input:
-	val fastq from fq_ch.collect()
+	file fastq from fq_ch.collect()
 	script:
 	"""
 	nextflow run nf-core/rnaseq -resume -profile singularity \
-	-c /gpfs/afm/cg_pipelines/Pipelines/singularity/nextflow_configs/UEA.config \
-	--reads '*{1,2}.{fastq,fq}.gz' \
+	-c RNAseq/expression/UEA.config \
+	--reads './*{1,2}.{fastq,fq}.gz' \
 	--genome GRCh37 \
 	--outdir '$baseDir/test' \
 	--max_memory '55.GB' \

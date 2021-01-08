@@ -24,6 +24,7 @@
 projectname: 'Tumoroid'
 
 #2 Where are the FASTQ files stored? (e.g. /gpfs/data/CG_pipelines/example/input/*{1,2}.fq.gz)
+# This can be left empty if files are in input directory
 
 fastq_dir: ''
 

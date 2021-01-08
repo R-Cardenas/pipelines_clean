@@ -7,6 +7,7 @@ import os
 import glob
 from bin.python.data_yaml import data
 import subprocess
+import re
 
 #################
 ## MERGE LANES ##
@@ -39,8 +40,25 @@ if output_dir == "":
 else:
     output_dir2 = "--outdir " + output_dir + " \\"
     replace_string = f"sed -i 's/--outdir .*/{output_dir2}/g' nfcore-rnaseq*.nf'" # replace rna-seq nf with YAML input
-    os.system(replace_string)
+    p = subprocess.run(replace_string, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+    print(p)
     print('updated output_dir...')
+
+########################
+## Input Dir         ##
+########################
+
+input_dir = data['fastq_dir']
+if input_dir == "":
+    input_dir2 = 'params.fq = "$baseDir/input/*{fq,fastq}.gz"'
+else:
+    input_dir2 = "params.fq = " + input_dir + "/*{fq,fastq}.gz"
+    input_dir3 = re.sub('//','/',input_dir2) # will replce double back slash to single (may be introduced by user in yaml)
+    replace_string = f"sed -i 's/$params.fq =.*/{input_dir3}/g' nfcore-rnaseq*.nf'" # replace rna-seq nf with YAML input
+    p = subprocess.run(replace_string, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+    print(p)
+    print('updated input_dir...')
+
 
 ###################
 ## Genome Config ##
