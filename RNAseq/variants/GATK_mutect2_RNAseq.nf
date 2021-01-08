@@ -7,7 +7,7 @@ params.normal = ["17TB0788-Organoids-merged-R1Aligned.sortedByCoord.out.markDups
  * create a channel for bam files produced by cgpmap_processing pipeline
  */
 //params.bam = "$baseDir/{output/aligned_sorted/*.rename.bam,input/*.bam}"
-params.bam ="/gpfs/afm/cg_pipelines/Pipelines/Williams_RNAseq/pipelines_clean/output/markDuplicates"
+params.bam ="/gpfs/afm/cg_pipelines/Pipelines/Williams_RNAseq/output/markDuplicates/*bam"
 bam_ch = Channel .fromPath( params.bam )
 
 bam_ch.into { bam2_ch; bam3_ch }
@@ -35,6 +35,7 @@ println """\
 process SplitNCigarReads {
 	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
 	maxRetries 6
+	stageInMode 'copy'
   storeDir "$baseDir/output/SplitNCigarReads"
   input:
   file bam from bam2_ch
@@ -48,6 +49,7 @@ gatk SplitNCigarReads \
       -R $genome_fasta \
       -I ${bam} \
       -O ${bam.simpleName}_CIGAR.bam
+rm -fr ${bam}
   """
 }
 
@@ -62,9 +64,17 @@ process BaseRecalibrator {
 	file "${bam}.table" into table_ch
   script:
   """
+	gatk AddOrReplaceReadGroups \
+	-I ${bam} \
+	-O ${bam.simpleName}.reheader.bam \
+	-LB lib1 \
+	-PL ILLUMINA \
+	-PU instrument1 \
+	-SM ${bam.simpleName}
+
 	mkdir -p tmp
   gatk BaseRecalibrator \
-	-I ${bam} \
+	-I ${bam.simpleName}.reheader.bam \
   -R $genome_fasta \
   --known-sites $GATK_dbsnp138 \
   --known-sites $GATK_1000G \
@@ -74,16 +84,19 @@ process BaseRecalibrator {
 
 	gatk ApplyBQSR \
   -R $genome_fasta \
-  -I ${bam} \
+  -I ${bam.simpleName}.reheader.bam \
   --bqsr-recal-file ${bam}.table \
   -O ${bam.simpleName}.BQSR.bam \
 	--tmp-dir tmp
 	rm -fr tmp
 
+	rm -fr ${bam.simpleName}.reheader.bam
   """
 }
 
 process mutect2 {
+	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 6
   storeDir "$baseDir/output/mutect2/mutect2"
   input:
   val x from tumor_ch
@@ -116,6 +129,8 @@ process mutect2 {
 }
 
 process pileup_summary{
+	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 6
   storeDir "$baseDir/output/mutect2/mutect2"
 	input:
 	file table from table_ch
@@ -130,6 +145,8 @@ process pileup_summary{
 }
 
 process filter_vcf {
+	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 6
 	storeDir "$baseDir/output/mutect2/mutect2/filtered_vcf"
 	input:
 	file vcf from filter_vcf_ch
@@ -146,6 +163,8 @@ process filter_vcf {
 
 // needs samttools
 process zip {
+	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 6
   storeDir "$baseDir/output/VCF_collect"
 	input:
 	file zip from zip_ch
