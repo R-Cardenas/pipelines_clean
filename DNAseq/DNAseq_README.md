@@ -4,14 +4,14 @@
 
 This README explains how the inputs / outputs are organised and how this connects multiple nextflow pipeline scripts together. For more in-depth details about the individual pipelines please select from the list below:
 
-cgpMAP ([link](Exome/cgpmap/README.md))
-cgpWXS
-cgpWGS
-Mutect2 (no documentation*)
-Haplotypcaller (no documentation*)
-Freebayes (no documentation*)
+- cgpMAP ([link](Exome/cgpmap/README.md))
+- cgpWXS
+- cgpWGS
+- Mutect2 (no documentation*)
+- Haplotypcaller (no documentation*)
+- Freebayes (no documentation*)
 
-** no documentation for these pipelines as they are straightforward - the move linearly from process to process. Please look at the .nf file to identify the tools that are run in these pipelines.*
+*_no documentation for these pipelines as they are straightforward - the move linearly from process to process. Please look at the .nf file to identify the tools that are run in these pipelines._
 
 # Connecting pipelines
 
