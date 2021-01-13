@@ -130,6 +130,8 @@ pipelines: "freebayes gatk_haplotypecaller"
 
 # Technical Information
 
+First it is reccommended to read how a basic nextflow pipeline is built (https://www.nextflow.io/docs/latest/getstarted.html)
+
 The pipelines we have currently are shown below. Click on each individual link to access each README md. For the user README, which explains how to use the pipelines please click here (link).
 
 DNA-seq:
