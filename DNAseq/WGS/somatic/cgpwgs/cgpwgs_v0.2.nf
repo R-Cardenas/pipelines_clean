@@ -3,7 +3,7 @@
 params.tumor = ["PD13382a","PD13389a","PD13399a"]
 params.normal = ["PD13382b","PD13389b","PD13399b"]
 
-
+ 
 // Define Tumor vs Normal Variables
 tumor_ch = Channel .from (params.tumor )
 normal_ch = Channel .from (params.normal )
