@@ -4,7 +4,7 @@
 
 This README explains how the inputs / outputs are organised and how this connects multiple nextflow pipeline scripts together. For more in-depth details about the individual pipelines please select from the list below:
 
-    - cgpMAP ([link](cgpmap/README.md))
+    - cgpMAP ([link](Exome/cgpmap/README.md))
 
 
 # Connecting pipelines
