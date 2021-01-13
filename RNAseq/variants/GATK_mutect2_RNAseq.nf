@@ -1,7 +1,7 @@
 // This works on STAR aligned and picard remove duplicates bam files
 
-params.tumor = ["17TB0788-Tumoroids-merged-R1Aligned.sortedByCoord.out.markDups.bam","17TB0815-Tumoroids-merged-R1Aligned.sortedByCoord.out.markDups.bam","18TB0008-Tumouroids-merged-R1Aligned.sortedByCoord.out.markDups.bam","18TB0035-Tumouroids-merged-R1Aligned.sortedByCoord.out.markDups.bam","18TB0071-Tumouroids-merged-R1Aligned.sortedByCoord.out.markDups.bam","18TB0132-Tumouroids-merged-R1Aligned.sortedByCoord.out.markDups.bam"]
-params.normal = ["17TB0788-Organoids-merged-R1Aligned.sortedByCoord.out.markDups.bam","17TB0815-Organoids-merged-R1Aligned.sortedByCoord.out.markDups.bam","18TB0008-Organoids-merged-R1Aligned.sortedByCoord.out.markDups.bam","18TB0035-Organoids-merged-R1Aligned.sortedByCoord.out.markDups.bam","18TB0071-Organoids-merged-R1Aligned.sortedByCoord.out.markDups.bam","18TB0132-Organoids-merged-R1Aligned.sortedByCoord.out.markDups.bam"]
+params.tumor = ["17TB0788-Tumoroids-merged-R1Aligned.sortedByCoord.out.markDups","17TB0815-Tumoroids-merged-R1Aligned.sortedByCoord.out.markDups","18TB0008-Tumouroids-merged-R1Aligned.sortedByCoord.out.markDups","18TB0035-Tumouroids-merged-R1Aligned.sortedByCoord.out.markDups","18TB0071-Tumouroids-merged-R1Aligned.sortedByCoord.out.markDups","18TB0132-Tumouroids-merged-R1Aligned.sortedByCoord.out.markDups"]
+params.normal = ["17TB0788-Organoids-merged-R1Aligned.sortedByCoord.out.markDups","17TB0815-Organoids-merged-R1Aligned.sortedByCoord.out.markDups","18TB0008-Organoids-merged-R1Aligned.sortedByCoord.out.markDups","18TB0035-Organoids-merged-R1Aligned.sortedByCoord.out.markDups","18TB0071-Organoids-merged-R1Aligned.sortedByCoord.out.markDups","18TB0132-Organoids-merged-R1Aligned.sortedByCoord.out.markDups"]
 
 /*
  * create a channel for bam files produced by cgpmap_processing pipeline
@@ -60,7 +60,7 @@ process BaseRecalibrator {
   input:
   file bam from bsqr_ch
   output:
-  file "${bam.simpleName}.BQSR.bam" into (mutect2_1_ch,mutect2_2_ch,pileup_ch)
+  file "${bam.simpleName}.BQSR.bam" into mutect2_1_ch
 	file "${bam}.table" into table_ch
   script:
   """
@@ -95,36 +95,23 @@ process BaseRecalibrator {
 }
 
 process mutect2 {
-	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-	maxRetries 6
-  storeDir "$baseDir/output/mutect2/mutect2"
+	//errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	//maxRetries 6
+  storeDir "$baseDir/output/mutect2"
   input:
   val x from tumor_ch
   val y from normal_ch
-  file "${x}.bam" from mutect2_1_ch
-  file "${y}.bam" from mutect2_2_ch
+  file bam from mutect2_1_ch.collect()
   output:
-  file "${x}vs${y}.vcf.gz" into filter_vcf_ch
+  file "*.vcf.gz" into filter_vcf_ch
   script:
   """
-	mkdir -p tmp
-	gatk BuildBamIndex \
-	-I ${x}.bam \
-	-O ${x}.bam.bai \
-	--TMP_DIR tmp
-	gatk BuildBamIndex \
-	-I ${y}.bam \
-	-O ${y}.bam.bai \
-	--TMP_DIR tmp
-
-  gatk Mutect2 \
-	-R $genome_fasta \
-  -I ${x}.bam \
-  -I ${y}.bam \
-  -normal ${y}.bam \
-  --germline-resource $Mutect2_germline \
-  --panel-of-normals $Mutect2_PoN \
-  -O ${x}vs${y}.vcf.gz
+	python $baseDir/bin/python/run_mutect2.py \
+	--tumor '${x}' \
+	--normal '${y}' \
+	--germline '$Mutect2_germline' \
+	--PoN '$Mutect2_PoN' \
+	--ref '$genome_fasta'
     """
 }
 
@@ -139,7 +126,7 @@ process pileup_summary{
 	script:
 	"""
   gatk AnalyzeCovariates \
-  -bqsr  \
+  -bqsr ${table} \
   -plots ${table.simpleName}_covariates.pdf
 	"""
 }
@@ -149,7 +136,7 @@ process filter_vcf {
 	maxRetries 6
 	storeDir "$baseDir/output/mutect2/mutect2/filtered_vcf"
 	input:
-	file vcf from filter_vcf_ch
+	file vcf from filter_vcf_ch.flatten()
 	output:
 	file "${vcf.simpleName}.filtered.vcf" into zip_ch
 	script:
