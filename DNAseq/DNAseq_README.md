@@ -7,9 +7,10 @@ This README explains how the inputs / outputs are organised and how this connect
 - cgpMAP ([link](Exome/cgpmap/README.md))
 - cgpWXS ([link](Exome/somatic/cgpwxs/README.md))
 - cgpWGS ([link](WGS/somatic/cgpwgs/README.md))
-- Mutect2 (no documentation*)
+- Mutect2 ([link](Exome/somatic/mutect2/README.md))
 - Haplotypcaller (no documentation*)
 - Freebayes (no documentation*)
+- Variant processing ...
 
 *_no documentation for these pipelines as they are straightforward - the move linearly from process to process. Please look at the .nf file to identify the tools that are run in these pipelines._
 
