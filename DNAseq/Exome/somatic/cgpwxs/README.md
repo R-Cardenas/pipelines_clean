@@ -16,6 +16,8 @@ tumor_ch = Channel .from (params.tumor )
 normal_ch = Channel .from (params.normal )
 ```
 
+NOTE: we are not importing the file locations. But the values of the sample names and this will be used later for wildcards, therfore it is imperative the files are in the correct place (i.e. $baseDir/input or .... where? RMD)
+
 It is important that the samples are in the correct order, ie params.tumor[1] (PD13382a) and params.normal[1] (PD13382b), as this is the order which nextflow will pipe these into the pipeline.
 
 ## Process - upper

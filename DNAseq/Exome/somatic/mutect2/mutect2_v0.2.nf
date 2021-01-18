@@ -35,7 +35,7 @@ process BaseRecalibrator {
   input:
   file bam from bam2_ch
   output:
-  file "${bam.simpleName}.BQSR.bam" into (mutect2_1_ch,mutect2_2_ch,pileup_ch)
+  file "${bam.simpleName}.BQSR.bam" into (mutect2_1_ch,pileup_ch)
 	file "${bam}.table"
   script:
   """
@@ -61,41 +61,30 @@ process BaseRecalibrator {
 }
 
 process mutect2 {
-  storeDir "$baseDir/output/mutect2/mutect2"
+	//errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	//maxRetries 6
+  storeDir "$baseDir/output/mutect2"
   input:
   val x from tumor_ch
   val y from normal_ch
-  file "${x}.bam" from mutect2_1_ch
-  file "${y}.bam" from mutect2_2_ch
+  file bam from mutect2_1_ch.collect()
   output:
-  file "${x}vs${y}.vcf.gz" into filter_vcf_ch
+  file "*.vcf.gz" into filter_vcf_ch
   script:
   """
-	mkdir -p tmp
-	gatk BuildBamIndex \
-	-I ${x}.bam \
-	-O ${x}.bam.bai \
-	--TMP_DIR tmp
-	gatk BuildBamIndex \
-	-I ${y}.bam \
-	-O ${y}.bam.bai \
-	--TMP_DIR tmp
-
-  gatk Mutect2 \
-	-R $genome_fasta \
-  -I ${x}.bam \
-  -I ${y}.bam \
-  -normal ${y}.bam \
-  --germline-resource $Mutect2_germline \
-  --panel-of-normals $Mutect2_PoN \
-  -O ${x}vs${y}.vcf.gz
+	python $baseDir/bin/python/run_mutect2.py \
+	--tumor '${x}' \
+	--normal '${y}' \
+	--germline '$Mutect2_germline' \
+	--PoN '$Mutect2_PoN' \
+	--ref '$genome_fasta'
     """
 }
 
 process pileup_summary{
   storeDir "$baseDir/output/mutect2/mutect2"
 	input:
-	file bam from pileup_ch
+	file bam from pileup_ch.flatten()
 	output:
 	file "${bam.simpleName}.getpileupsummaries.table" into contamination_ch
 	script:

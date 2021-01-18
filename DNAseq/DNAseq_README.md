@@ -6,7 +6,7 @@ This README explains how the inputs / outputs are organised and how this connect
 
 - cgpMAP ([link](Exome/cgpmap/README.md))
 - cgpWXS ([link](Exome/somatic/cgpwxs/README.md))
-- cgpWGS ([link](Exome/somatic/cgpwgs/README.md))
+- cgpWGS ([link](WGS/somatic/cgpwgs/README.md))
 - Mutect2 (no documentation*)
 - Haplotypcaller (no documentation*)
 - Freebayes (no documentation*)
