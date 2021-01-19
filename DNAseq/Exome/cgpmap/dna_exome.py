@@ -6,6 +6,7 @@ import os
 # aft19qdu@uea.ac.uk
 import glob
 from bin.python.data_yaml import data
+import subprocess
 
 ################
 ## check BAIT ##
@@ -29,13 +30,15 @@ else:
 if data['merged_lanes'] == 'no':
     cgpmap_nf = "nextflow run dna-exome-nomerge.nf"
     cmd = "cp DNAseq/Exome/cgpmap/dna-exome-nomerge.nf ."
-    os.system(cmd)
+    p = subprocess.run(cmd, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+    print(p)
+
 elif data['merged_lanes'] == 'yes':
     cgpmap_nf = "nextflow run dna-exome-merge.nf"
-    cmd = "cp DNAseq/Exome/cgpmap/dna-exome-merge.nf ."
-    os.system(cmd)
+    cmd = "cp DNAseq/Exome/cgpmap/dna-exome-merge_v2.nf ."
+    p = subprocess.run(cmd, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+    print(p)
 else:
-    print('dna_exome.py - line10')
     raise SyntaxError("dna_exome.py: Incorrect 'merged_lanes' input. Please revise")
 
 ###################
@@ -55,7 +58,8 @@ else:
 ### Concat nextflow run and config into bash script in repo home Dir
 
 cgpmap_bash = cgpmap_nf + ' ' + cgpmap_config
-
 cgpmap_bash2 = "echo '" + cgpmap_bash + "' >> run_selected_pipeline.sh"
 print(cgpmap_bash2)
-os.system(cgpmap_bash2)
+
+p = subprocess.run(cgpmap_bash2, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+print(p)
