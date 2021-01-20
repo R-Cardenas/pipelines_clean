@@ -141,7 +141,7 @@ else:
 ########################## is different
 
 # Input fastqs
-fastq_input = data['fastq_dir']
+fastq_input = data['fastq_dir'] + "/*{1,2}.fq.gz"
 remove_inputDir = f"""find . -name "*.nf" -exec sed -i '/params.fq = /d' {{}} \;"""
 
 os.system(remove_inputDir)
