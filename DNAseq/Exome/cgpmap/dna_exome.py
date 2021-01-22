@@ -9,18 +9,30 @@ from bin.python.data_yaml import data
 import subprocess
 
 ################
-## check BAIT ##
+## check BEDs ##
 ################
 
-print("Checking for interval files...")
-interval_files = glob.glob('input/bait/*.bed')
-if interval_files == 0:
-    raise SyntaxError("No bed files found in input/bait .. Exome-seq analysis requires these file.")
-elif interval_files == 1:
-    raise SyntaxError("Only 1 bed file found in input/bait .. Both target and bait files required")
-else:
-    print("Found the following bed files in input/bait folder:")
-    print(interval_files)
+bait = data['bait_file']
+target = data['target_file']
+
+print("Checking for bed files located at: \n ")
+print(bait + '\n' + target)
+# check file location of files
+if len(glob.glob(bait)) == 0: raise SyntaxError("No bait bed file found")
+if len(glob.glob(target)) == 0: raise SyntaxError("No target bed file found")
+
+#########################
+## Add BEDs to configs ##
+#########################
+
+target_cmd1 = 'env.target_interval = "' + target + '"'
+bait_cmd = 'env.bait_interval  = "' + bait + '"'
+
+target_cmd2 = f"""for f in $(find . -name '*config'); do echo '{target_cmd1}' >> $f; done"""
+bait_cmd2 = f"""for f in $(find . -name '*config'); do echo '{bait_cmd1}' >> $f; done"""
+os.system(target_cmd2)
+os.system(bait_cmd2)
+
 
 #################
 ## MERGE LANES ##

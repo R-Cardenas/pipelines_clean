@@ -3,10 +3,10 @@
  */
 
 // Input Reads
+params.read1 = "$baseDir/input/*{1,2}.fq.gz"
 
 
-
-read1_ch = Channel .fromFilePairs( params.fq)
+read1_ch = Channel .fromFilePairs( params.read1 )
 read1_ch.into { read2_ch; read3_ch }
 
 params.csv = "$baseDir/bin/williams_batch2_info.csv"
@@ -173,20 +173,7 @@ process bam_merge {
 	file "*_merged.bam" into dup_ch
   script:
   """
-	# Create log file
-	echo '#RPC bam_merge logs from dna-exome-merge' >> $baseDir/logs/bam_merge_log.txt
-	echo '#All sample names on one line are expected to be the same. Otherwise a bug has occured' >> $baseDir/logs/bam_merge_log.txt
-	echo 'wild_card samples' >> $baseDir/logs/bam_merge_log.txt
-
-	# Samtools MERGE
-	# This will extract the sample name and create a samtools wild card
-	for f in \$(ls *.bam | sed -e 's/.*[/]//' -e 's/_.*//' | sort | uniq)
-	do
-	samtools merge \${f}_merged.bam \${f}*
-
-	printf "`echo \${f}` `echo $(ls \${f}*)`\\n" >> $baseDir/logs/bam_merge_log.txt
-
-	done
+	python $baseDir/bin/python/merge_bam_v2.py --bam '${bam}'
 
   """
 }

@@ -35,8 +35,12 @@ os.system(new_sh)
 # Remove historical variables from config files
 rm_projectname = f"""for f in $(find . -name '*config'); do sed -i '/env.projectname/d' $f; done"""
 rm_build = f"""for f in $(find . -name '*config'); do sed -i '/env.build/d' $f; done"""
+rm_bait = f"""for f in $(find . -name '*config'); do sed -i '/env.bait_interval/d' $f; done"""
+rm_target = f"""for f in $(find . -name '*config'); do sed -i '/env.target_interval/d' $f; done"""
 os.system(rm_projectname)
 os.system(rm_build)
+os.system(rm_bait)
+os.system(rm_target)
 
 ## Remove the nextflow files that may have been copied to baseDir
 cp_nf = 'rm -fr *.nf'

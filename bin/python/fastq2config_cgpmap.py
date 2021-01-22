@@ -38,12 +38,13 @@ f2_list = str.split(file2,":")
 ## Setting paramters for the config file - see for more details https://github.com/cancerit/PCAP-core/wiki/File-Formats-groupinfo.yaml
 
 # Sample names from both files and ensure they are same for both
-name1 = str.split(f1,"_")
+name1 = str.split(f1,"-")
 name1 = name1[0]
-name2 = str.split(f2,"_")
+name2 = str.split(f2,"-")
 name2 = name2[0]
 
 print(name1)
+print(name2)
 
 if name1 == name2:
     print("names are identical")
