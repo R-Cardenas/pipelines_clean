@@ -6,6 +6,7 @@ import sys
 import subprocess
 import glob
 import time
+import re
 
 from bin.python.data_yaml import data
 ##################
@@ -146,6 +147,7 @@ else:
 
 # Input fastqs
 fastq_input = data['fastq_dir'] + "/*{1,2}.fq.gz"
+fastq_input = re.sub('//','/',fastq_input)
 remove_inputDir = f"""find . -name "*.nf" -exec sed -i '/params.fq = /d' {{}} \;"""
 
 os.system(remove_inputDir)

@@ -26,7 +26,7 @@ if len(glob.glob(target)) == 0: raise SyntaxError("No target bed file found")
 #########################
 
 target_cmd1 = 'env.target_interval = "' + target + '"'
-bait_cmd = 'env.bait_interval  = "' + bait + '"'
+bait_cmd1 = 'env.bait_interval  = "' + bait + '"'
 
 target_cmd2 = f"""for f in $(find . -name '*config'); do echo '{target_cmd1}' >> $f; done"""
 bait_cmd2 = f"""for f in $(find . -name '*config'); do echo '{bait_cmd1}' >> $f; done"""
@@ -47,7 +47,7 @@ if data['merged_lanes'] == 'no':
 
 elif data['merged_lanes'] == 'yes':
     cgpmap_nf = "nextflow run dna-exome-merge.nf"
-    cmd = "cp DNAseq/Exome/cgpmap/dna-exome-merge_v2.nf ."
+    cmd = "cp DNAseq/Exome/cgpmap/dna-exome-merge.nf ."
     p = subprocess.run(cmd, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
     print(p)
 else:
