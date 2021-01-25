@@ -2,11 +2,9 @@
  * create a channel for fastq pairss
  */
 
-// Input Reads
-params.read1 = "$baseDir/input/*{1,2}.fq.gz"
 
 
-read1_ch = Channel .fromFilePairs( params.read1 )
+read1_ch = Channel .fromFilePairs( params.fq )
 read1_ch.into { read2_ch; read3_ch }
 
 params.csv = "$baseDir/bin/williams_batch2_info.csv"

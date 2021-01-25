@@ -25,7 +25,7 @@ SBATCH_header = """#!/bin/bash
 #SBATCH -t 168:00:00
 #SBATCH --mem=2G
 
-module add nextflow
+module add nextflow/20.04.1
 module add singularity
 """
 
