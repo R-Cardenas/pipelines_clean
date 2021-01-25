@@ -33,6 +33,9 @@ result = myLongCmdline.execute().text
 
 
 process trim_galore{
+	afterScript 'rm -fr ${reads[0]} ${reads[1]}'
+	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 2
 	stageInMode = 'copy' // trim_galore doesnt like sym/hardlinks.
   storeDir "$baseDir/output/cgpMAP/trim_galore"
 	input:
@@ -62,8 +65,8 @@ process trim_galore{
 
 
 process fqtools{
-
-
+	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 2
   storeDir "$baseDir/output/cgpMAP/trim_galore"
 	input:
 	file read1 from read7_ch
@@ -110,8 +113,8 @@ process fqtools{
 }
 
 process cgpMAP {
-
-
+	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 2
 	storeDir "$baseDir/output/cgpMAP/${read1.simpleName}"
   input:
 	val read1 from read5_ch
@@ -144,8 +147,8 @@ process cgpMAP {
 
 
 process sam_sort {
-
-
+	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 2
   storeDir "$baseDir/output/BAM/sorted"
   input:
   file bam from cgp_ch
@@ -177,8 +180,8 @@ process bam_merge {
 }
 
 process picard_pcr_removal {
-
-
+	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 2
 	storeDir "$baseDir/output/BAM/merged_lanes"
   input:
   file bam from dup_ch.flatten()
@@ -195,8 +198,8 @@ process picard_pcr_removal {
 }
 
 process bam_index {
-
-
+	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 2
 	storeDir "$baseDir/output/BAM/merged_lanes"
   input:
   file bam from index1_ch
@@ -216,8 +219,8 @@ process bam_index {
 
 
 process hybrid_stats {
-
-
+	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 2
 	storeDir "$baseDir/output/BAM/hybrid_stats"
   input:
   file bam from hs_ch
@@ -250,8 +253,8 @@ process hybrid_stats {
 }
 
 process alignment_stats{
-
-
+	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 2
 	storeDir "$baseDir/output/BAM/alignment_stats"
 	input:
 	file bam from bam10_ch
