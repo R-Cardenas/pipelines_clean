@@ -114,7 +114,10 @@ process fqtools{
 
 process cgpMAP {
 	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-	maxRetries 2
+	maxRetries 4
+	cpus 5
+	executor 'slurm'
+	memory '45 GB'
 	storeDir "$baseDir/output/cgpMAP/${read1.simpleName}"
   input:
 	val read1 from read5_ch
@@ -124,6 +127,11 @@ process cgpMAP {
   file "*.bam" into cgp_ch
   script:
   """
+	# delete and remake path in case or retry.
+	# as will cause to fail.
+
+	rm -fr $baseDir/output/cgpMAP/${read1.simpleName}
+	mkdir $baseDir/output/cgpMAP/${read1.simpleName}
 
   name=\$(echo '${read2}' | sed -e 's/.*[/]//' -e 's/_.*//')
 
