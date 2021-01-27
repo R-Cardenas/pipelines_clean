@@ -115,7 +115,7 @@ process fqtools{
 process cgpMAP {
 	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
 	maxRetries 4
-	cpus 5
+	cpus 10
 	executor 'slurm'
 	memory '45 GB'
 	storeDir "$baseDir/output/cgpMAP/${read1.simpleName}"
@@ -140,7 +140,7 @@ process cgpMAP {
   -r $cgpmap_genome \
   -i $cgpmap_index \
   -s \$name \
-  -t 5 \
+  -t 10 \
 	-g ${read1}.yaml \
   ${read1} ${read2}
 
