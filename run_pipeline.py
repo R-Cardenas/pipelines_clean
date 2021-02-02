@@ -30,22 +30,31 @@ module add singularity
 """
 
 new_sh = f"echo '{SBATCH_header}' >> run_selected_pipeline.sh"
-os.system(rm_existing) ## should this be bsub? or slurm?
-os.system(new_sh)
+p = subprocess.run(rm_existing, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+print(p)
+p = subprocess.run(new_sh, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+print(p)
+
 
 # Remove historical variables from config files
 rm_projectname = f"""for f in $(find . -name '*config'); do sed -i '/env.projectname/d' $f; done"""
 rm_build = f"""for f in $(find . -name '*config'); do sed -i '/env.build/d' $f; done"""
 rm_bait = f"""for f in $(find . -name '*config'); do sed -i '/env.bait_interval/d' $f; done"""
 rm_target = f"""for f in $(find . -name '*config'); do sed -i '/env.target_interval/d' $f; done"""
-os.system(rm_projectname)
-os.system(rm_build)
-os.system(rm_bait)
-os.system(rm_target)
+p = subprocess.run(rm_projectname, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+print(p)
+p = subprocess.run(rm_build, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+print(p)
+p = subprocess.run(rm_bait, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+print(p)
+p = subprocess.run(rm_target, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+print(p)
+
 
 ## Remove the nextflow files that may have been copied to baseDir
 cp_nf = 'rm -fr *.nf'
-os.system(cp_nf)
+p = subprocess.run(cp_nf, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+print(p)
 
 #####################
 ### PROJECT NAME ####
@@ -57,7 +66,8 @@ projectname2 = 'env.projectname = "' + projectname + '"'
 print("Project name is: " + projectname2)
 ## Below line requires python >3.6
 add_projectname = f"""for f in $(find . -name '*config'); do echo 'env.projectname={projectname2}' >> $f; done""" # add projectname to all config files
-os.system(add_projectname)
+p = subprocess.run(add_projectname, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+
 
 
 genome_assembly = data['genome_assembly'].lower() # extract the projects name
@@ -99,8 +109,8 @@ else:
 ## You need to put in WGS
 
 if data['samples'].lower() == 'dna-exome' and data['variant'] == 'germline':
-    variant_nf = "nextflow run freebayes_individual.nf & \"" \
-                 "nextflow run haplotypecaller_individual.nf"
+    variant_nf = """nextflow run freebayes_individual.nf & \ \
+                 nextflow run haplotypecaller_individual.nf"""
     cmd1 = "cp DNAseq/Exome/germline/freebayes/freebayes_individual.nf ."
     cmd2 = "cp DNAseq/Exome/germline/gatk/haplotypecaller_individual.nf ."
     p = subprocess.run(cmd1, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)

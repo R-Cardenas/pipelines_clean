@@ -30,9 +30,10 @@ bait_cmd1 = 'env.bait_interval  = "' + bait + '"'
 
 target_cmd2 = f"""for f in $(find . -name '*config'); do echo '{target_cmd1}' >> $f; done"""
 bait_cmd2 = f"""for f in $(find . -name '*config'); do echo '{bait_cmd1}' >> $f; done"""
-os.system(target_cmd2)
-os.system(bait_cmd2)
-
+p = subprocess.run(target_cmd2, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+print(p)
+p = subprocess.run(bait_cmd2, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+print(p)
 
 #################
 ## MERGE LANES ##
@@ -71,7 +72,7 @@ else:
 
 cgpmap_bash = cgpmap_nf + ' ' + cgpmap_config
 cgpmap_bash2 = "echo '" + cgpmap_bash + "' >> run_selected_pipeline.sh"
-print(cgpmap_bash2)
+
 
 p = subprocess.run(cgpmap_bash2, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
 print(p)
