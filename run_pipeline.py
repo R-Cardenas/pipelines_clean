@@ -109,8 +109,7 @@ else:
 ## You need to put in WGS
 
 if data['samples'].lower() == 'dna-exome' and data['variant'] == 'germline':
-    variant_nf = """nextflow run freebayes_individual.nf & \ \
-                 nextflow run haplotypecaller_individual.nf"""
+    variant_nf = "nextflow run freebayes_individual.nf & nextflow run haplotypecaller_individual.nf"
     cmd1 = "cp DNAseq/Exome/germline/freebayes/freebayes_individual.nf ."
     cmd2 = "cp DNAseq/Exome/germline/gatk/haplotypecaller_individual.nf ."
     p = subprocess.run(cmd1, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
@@ -119,8 +118,7 @@ if data['samples'].lower() == 'dna-exome' and data['variant'] == 'germline':
     print(p)
 
 elif data['samples'].lower() == 'dna-exome' and data['variant'] == 'somatic':
-    variant_nf = "nextflow run cgpwxs_v0.1.nf & \"" \
-                 "nextflow run mutect2_individual.nf"
+    variant_nf = "nextflow run cgpwxs_v0.1.nf & nextflow run mutect2_individual.nf"
     cmd1 = "cp DNAseq/Exome/somatic/cgpwxs_v0.1.nf ."
     cmd2 = "cp DNAseq/Exome/somatic/mutect2_individual.nf ."
     p = subprocess.run(cmd1, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
@@ -160,13 +158,16 @@ fastq_input = data['fastq_dir'] + "/*{1,2}.fq.gz"
 fastq_input = re.sub('//','/',fastq_input)
 remove_inputDir = f"""find . -name "*.nf" -exec sed -i '/params.fq = /d' {{}} \;"""
 
-os.system(remove_inputDir)
+p = subprocess.run(remove_inputDir, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+print(p)
+
 
 # Output dir (not for rna-seq - see rnaseq.py)
 output_base = data['output_dir']
 remove_outputDir = f"""find . -name "*.nf" -exec sed -i '/params.outputdir = /d' {{}} \;"""
 
-os.system(remove_outputDir)
+p = subprocess.run(remove_outputDir, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+print(p)
 
 # Add input and output dirs back in with YAML input:
 input1 = f"""params.fq = \"{fastq_input}\""""

@@ -6,7 +6,7 @@
 import os
 # RPC 080720
 # aft19qdu@uea.ac.uk
-from run_pipeline import data
+from bin.python.data_yaml import data
 import glob
 
 
