@@ -28,7 +28,7 @@ println """\
 
 process Freebayes {
 	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-	maxRetries 6
+	maxRetries 2
   storeDir "$baseDir/output/freebayes"
   input:
   file bam from bam_ch

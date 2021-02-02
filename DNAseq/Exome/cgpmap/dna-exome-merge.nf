@@ -2,7 +2,7 @@
  * create a channel for fastq pairss
  */
 
-
+params.fq = "/gpfs/afm/cg_pipelines/Pipelines/Cholesteatoma/chole_batch2_rerun_140121/**/*{1,2}.fq.gz"
 
 read1_ch = Channel .fromFilePairs( params.fq )
 read1_ch.into { read2_ch; read3_ch }
@@ -161,21 +161,20 @@ process sam_sort {
   input:
   file bam from cgp_ch
   output:
-  file "${bam.simpleName}.sorted.bam" into bam_merge_ch
+  file "${bam}.sorted.bam" into bam_merge_ch
   script:
   """
 	# create the tmp file as picard can create large temp files
 
 	mkdir -p tmp
-  picard SortSam I=${bam} O=${bam.simpleName}.sorted.bam SORT_ORDER=coordinate TMP_DIR=tmp
-	TMP_DIR=tmp
+  picard SortSam I=${bam} O=${bam}.sorted.bam SORT_ORDER=coordinate TMP_DIR=tmp
 	rm -fr tmp
   """
 }
 
 // dont forget to add singularity with python3 installed
 process bam_merge {
-  storeDir "$baseDir/output/BAM/sorted"
+  storeDir "$baseDir/output/BAM/merge"
   input:
   file bam from bam_merge_ch.collect()
   output:
