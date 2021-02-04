@@ -38,9 +38,9 @@ f2_list = str.split(file2,":")
 ## Setting paramters for the config file - see for more details https://github.com/cancerit/PCAP-core/wiki/File-Formats-groupinfo.yaml
 
 # Sample names from both files and ensure they are same for both
-name1 = str.split(f1,"-")
+name1 = str.split(str(n1),"-")
 name1 = name1[0]
-name2 = str.split(f2,"-")
+name2 = str.split(str(n2),"-")
 name2 = name2[0]
 
 print(name1)

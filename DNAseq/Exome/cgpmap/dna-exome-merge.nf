@@ -104,7 +104,7 @@ process fqtools{
 	fi
 
 
-	python $baseDir/nextflow_pipelines/bin/python/fastq2config_cgpmap.py \
+	python $baseDir/bin/python/fastq2config_cgpmap.py \
 	--fq1 ${read1.simpleName}.txt --fq2 ${read2.simpleName}.txt \
 	--n1 ${read1} --n2 ${read2} --o ${read1}.yaml
 
@@ -133,7 +133,7 @@ process cgpMAP {
 	rm -fr $baseDir/output/cgpMAP/${read1.simpleName}
 	mkdir $baseDir/output/cgpMAP/${read1.simpleName}
 
-  name=\$(echo '${read2}' | sed -e 's/.*[/]//' -e 's/_.*//')
+  name=\$(echo '${read2}' | sed -e 's/.*[/]//' -e 's/-.*//')
 
   ds-cgpmap.pl  \
   -outdir $baseDir/output/cgpMAP/${read1.simpleName} \
