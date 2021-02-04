@@ -5,9 +5,13 @@
 
 import argparse
 import os
+import subprocess
 
 parser = argparse.ArgumentParser()
-files = parser.add_argument('--files', required=True)
+parser.add_argument('--bam', required=True)
+
+args = parser.parse_args()
+files = args.bam
 files2 = files.split(" ")
 
 for f in files2:
@@ -18,5 +22,5 @@ for f in files2:
     PED = family + "\t" + sample + "\t0\t0\t1\t2"
 
     cmd = "echo '" + PED + "' >> project.PED"
-    os.system(cmd)
-    print(PED)
+    p = subprocess.run(cmd, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+    print(p)

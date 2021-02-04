@@ -27,6 +27,8 @@ SBATCH_header = """#!/bin/bash
 
 module add nextflow/20.04.1
 module add singularity
+module add python/anaconda/2020.07
+module add samtools
 """
 
 new_sh = f"echo '{SBATCH_header}' >> run_selected_pipeline.sh"

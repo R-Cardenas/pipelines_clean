@@ -6,11 +6,17 @@ import argparse
 import time
 import collections
 import pandas as pd
+import subprocess
 
 parser = argparse.ArgumentParser()
-files = parser.add_argument('--bam', required=True)
-#files = "S1208-S12.bam S1208-S13.bam S1205-12.bam" this is test input
+parser.add_argument('--bam', required=True)
+
+args = parser.parse_args()
+files = args.bam
 files2 = files.split(" ")
+
+#files = "S1208-S12.bam S1208-S13.bam S1205-12.bam" # this is test input
+#files2 = files.split(" ")
 
 bam_samples = list()
 for f in files2:
@@ -40,12 +46,12 @@ merge_samples =  count_df.query('count > 1')
 # For loop submits each sample to be lane merged
 for i in merge_samples['samples']:
     sample = str(i)
-    script = '"samtools merge ' + sample + '_merged.bam ' + sample + '*bam -@ 5"'
-    script2 = '#SBATCH -p compute-16-24 --mem 10G --job-name=bam_merge_' + sample + ' -e %j.err ' + script
+    script = 'samtools merge ' + sample + '-merged.bam ' + sample + '*bam'
+    script2 = 'srun ' + script
     p = subprocess.run(script2, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
     print(p)
-    time.sleep(180)
 
+time.sleep(180)
 
 ###############################
 ## Check the file exists     ##
@@ -55,12 +61,12 @@ for i in merge_samples['samples']:
 def loop():
     for i in merge_samples['samples']:
         sample = str(i)
-        file = sample + "_merged.bam"
+        file = sample + "-merged.bam"
         if os.path.isfile(file):
             print ("File exist")
         else:
             print('file does not exist yet')
-            time.sleep(360)
+            time.sleep(30)
             loop()
 
 
@@ -74,16 +80,16 @@ def loop():
 def size():
     for i in merge_samples['samples']:
         sample = str(i)
-        file = sample + "_merged.bam"
+        file = sample + "-merged.bam"
         size1 = os.stat(file).st_size
-        time.sleep(180)
+        time.sleep(30)
         size2 = os.stat(file).st_size
         if size1 == size2: # compares same files two minutes apart. If they are the same size it is presumed processing has finished.
             print("files are the same size")
-            os.system("echo 'size1, size2 " + size1 + size2 + file + "' >> size.log")
+            os.system("echo 'size1, size2 " + str(size1) + str(size2) + str(file) + "' >> size.log")
         else:
             size()
 
 loop()
 size()
-time.sleep(500)
+exit()

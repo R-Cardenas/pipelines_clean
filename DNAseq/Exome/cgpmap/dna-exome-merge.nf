@@ -178,7 +178,7 @@ process bam_merge {
   input:
   file bam from bam_merge_ch.collect()
   output:
-	file "*_merged.bam" into dup_ch
+	file "*-merged.bam" into dup_ch
   script:
   """
 	python $baseDir/bin/python/merge_bam_v2.py --bam '${bam}'
@@ -280,7 +280,8 @@ process alignment_stats{
 }
 
 process verifybamid{
-
+	cpus 5
+	executor 'slurm'
 	stageInMode = 'copy' // somalier doesnt like sym/hardlinks.
 	storeDir "$baseDir/output/BAM/verifyBamID"
 	input:
@@ -318,6 +319,8 @@ process somalier{
 	file "*.html"
   script:
   """
+	python $baseDir/bin/python/PED_file.py --bam '$bam'
+
 	mkdir -p bin
 	wget -P bin/ https://github.com/brentp/somalier/files/3412456/sites.hg38.vcf.gz
 
@@ -325,7 +328,7 @@ process somalier{
     /somalier:v0.2.11/somalier extract -d extracted/ --sites bin/sites.hg38.vcf.gz -f $genome_fasta \$f
 	done
 
-	/somalier:v0.2.11/somalier relate --ped $baseDir/bin/project.PED  extracted/*.somalier
+	/somalier:v0.2.11/somalier relate --ped project.PED  extracted/*.somalier
 
 	wget -P ancestry_files https://raw.githubusercontent.com/brentp/somalier/master/scripts/ancestry-labels-1kg.tsv
 
