@@ -25,6 +25,11 @@ if len(glob.glob(target)) == 0: raise SyntaxError("No target bed file found")
 ## Add BEDs to configs ##
 #########################
 
+bait = "$baseDir/" + bait
+bait = bait.replace("//","/")
+target = "$baseDir/" + target
+target = target.replace("//","/")
+
 target_cmd1 = 'env.target_interval = "' + target + '"'
 bait_cmd1 = 'env.bait_interval  = "' + bait + '"'
 

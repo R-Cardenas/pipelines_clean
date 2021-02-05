@@ -300,7 +300,9 @@ process verifybamid{
 	--out ${bam.simpleName} \
 	--maxDepth 1000 \
 	--precise \
-	--verbose
+	--verbose \
+	--ignoreRG \
+	-ignoreOverlapPair 
 
 	rm -fr *.bam
 	"""
