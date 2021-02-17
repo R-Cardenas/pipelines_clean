@@ -21,7 +21,7 @@ files2 = files.split(" ")
 bam_samples = list()
 for f in files2:
     list = f.split("-")
-    sample = list[0]
+    sample = list[0] + "-" + list[1]
     bam_samples.append(sample)
 
 # Convert dict to df and count number of samples in each
@@ -34,6 +34,18 @@ single_samples =  count_df.query('count == 1')
 print('\n \n ')
 print('The following samples are not sequenced on multiple lanes: \n \n ')
 print(single_samples)
+
+#####################################
+## For single samples chamnge name ##
+#####################################
+
+# The single samples names need to be changed to '-merged' or nextflow wont recognise it.
+for i in single_samples['samples']:
+    sample = str(i)
+    script = f"mv {sample}* {sample}-merged.bam"
+    p = subprocess.run(script, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+    print(p)
+
 
 # Slice df for samples across multiple lanes to merge
 merge_samples =  count_df.query('count > 1')
@@ -52,6 +64,8 @@ for i in merge_samples['samples']:
     print(p)
 
 time.sleep(180)
+
+
 
 ###############################
 ## Check the file exists     ##

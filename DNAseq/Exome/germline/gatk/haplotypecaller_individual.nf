@@ -40,9 +40,6 @@ process BaseRecalibrator {
   --known-sites $GATK_dbsnp138 \
   --known-sites $GATK_1000G \
   --known-sites $GATK_mills \
-	--read-index /var/spool/mail/hg19_GRCh37d5/GATK_rosource/dbsnp_138.b37.vcf.idx.gz \
-	--read-index /var/spool/mail/hg19_GRCh37d5/GATK_rosource/1000G_phase1.snps.high_confidence.b37.vcf.idx.gz \
-	--read-index /var/spool/mail/hg19_GRCh37d5/GATK_rosource/Mills_and_1000G_gold_standard.indels.b37.vcf.idx.gz \
   -O ${bam}.table \
 	--tmp-dir tmp
 
@@ -90,6 +87,8 @@ process haplotypeCaller {
 
 
 process CNNscoreVariants {
+	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 6
   storeDir "$baseDir/output/GATK_haplotypeCaller"
   input:
   file vcf from haplotype2_ch
@@ -111,6 +110,8 @@ process CNNscoreVariants {
 }
 
 process FilterVariantTranches {
+	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 6
   storeDir "$baseDir/output/GATK_haplotypeCaller"
 	input:
 	file vcf from filterVCF_ch
@@ -139,6 +140,8 @@ process FilterVariantTranches {
 
 // needs samttools
 process zip {
+	errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 6
   storeDir "$baseDir/output/VCF_collect"
 	input:
 	file zip from zip_ch
@@ -148,8 +151,7 @@ process zip {
 	script:
 	"""
 	bgzip ${zip}
-	mv ${zip}.gz ${zip.simpleName}.GATK.vcf.gz
-	bcftools index ${zip.simpleName}.GATK.vcf.gz.csi
+	bcftools index ${zip}.gz
 	"""
 }
 

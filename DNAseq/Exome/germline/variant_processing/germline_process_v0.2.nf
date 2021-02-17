@@ -82,27 +82,26 @@ process indels_sort {
 
 }
 
-process VEP3 {
-  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
-	maxRetries 6
+process VEP {
   executor 'slurm'
   cpus 5
+  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+	maxRetries 6
   storeDir "$baseDir/output/VCF_collect/split_vcf/VEP"
   input:
   file vcf from vep_ch.flatten()
   output:
-  file "${vcf.baseName}_VEP.txt" into vep_filter_ch
+  file "${vcf.baseName}_VEP.vcf" into vep32_ch
   script:
   """
   /ensembl-vep/vep -i ${vcf} \
   --dir /var/spool/mail/VEP_hg38/.vep \
-  -o ${vcf.baseName}_VEP.txt \
+  -o ${vcf.baseName}_VEP.vcf \
   --cache homo_sapiens \
   --sift b \
   --polyphen b \
   --variant_class \
   --af_gnomad \
-  --tab \
   --show_ref_allele \
   --symbol \
   --nearest gene \
@@ -110,18 +109,44 @@ process VEP3 {
   """
 }
 
-process vep_header {
-  storeDir "$baseDir/output/VCF_collect/split_vcf/VEP"
+
+process functotator2 {
+  executor 'slurm'
+  cpus 5
+  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+  maxRetries 6
+  storeDir "$baseDir/output/VCF_collect/merge_vcf/functotator"
   input:
-  file txt from vep_filter_ch
+  file vcf from vep32_ch.flatten()
   output:
-  file "${txt.baseName}_noheader.txt"
+  file "${vcf.baseName}.maf" into header_ch
   script:
   """
-  sed -i 's/#Uploaded_variation/Uploaded_variation/g' ${txt}
-  awk '!/\\#/' ${txt} > ${txt.baseName}_noheader.txt
+  gatk IndexFeatureFile \
+     -I ${vcf}
+
+  gatk Funcotator \
+   -R /var/spool/mail/cgpwgs_ref/GRCh38/core_ref_GRCh38_hla_decoy_ebv/genome.fa \
+   -V ${vcf} \
+   -O ${vcf.baseName}.maf \
+   --output-file-format MAF \
+   --data-sources-path /var/spool/mail/GATK_functotator_files/funcotator_dataSources.v1.7.20200521g \
+   --ref-version hg38
   """
 }
+
+process maf_header {
+  storeDir "$baseDir/output/VCF_collect/merge_vcf/functotator"
+  input:
+  file maf from header_ch
+  output:
+  file "${maf.baseName}_noheader.maf"
+  script:
+  """
+  awk '!/\\#/' ${maf} > ${maf.baseName}_noheader.maf
+  """
+}
+
 
 // and VEP_fasta added
 // use pipeline bundle 1 has python3 installed
@@ -223,18 +248,17 @@ process VEP2 {
   input:
   file vcf from vep2_ch.flatten()
   output:
-  file "${vcf.baseName}_VEP.txt" into vep22_ch
+  file "${vcf.baseName}_VEP.vcf" into vep3_ch
   script:
   """
   /ensembl-vep/vep -i ${vcf} \
   --dir /var/spool/mail/VEP_hg38/.vep \
-  -o ${vcf.baseName}_VEP.txt \
+  -o ${vcf.baseName}_VEP.vcf \
   --cache homo_sapiens \
   --sift b \
   --polyphen b \
   --variant_class \
   --af_gnomad \
-  --tab \
   --show_ref_allele \
   --symbol \
   --nearest gene \
@@ -242,15 +266,40 @@ process VEP2 {
   """
 }
 
-process vep_header2 {
-  storeDir "$baseDir/output/VCF_collect/split_vcf/VEP"
+
+process functotator {
+  executor 'slurm'
+  cpus 5
+  errorStrategy { sleep(Math.pow(2, task.attempt) * 200 as long); return 'retry' }
+  maxRetries 6
+  storeDir "$baseDir/output/VCF_collect/merge_vcf/functotator"
   input:
-  file txt from vep22_ch
+  file vcf from vep3_ch.flatten()
   output:
-  file "${txt.baseName}_noheader.txt"
+  file "${vcf.baseName}.maf" into header2_ch
   script:
   """
-  sed -i 's/#Uploaded_variation/Uploaded_variation/g' ${txt}
-  awk '!/\\#/' ${txt} > ${txt.baseName}_noheader.txt
+  gatk IndexFeatureFile \
+     -I ${vcf}
+
+  gatk Funcotator \
+   -R /var/spool/mail/cgpwgs_ref/GRCh38/core_ref_GRCh38_hla_decoy_ebv/genome.fa \
+   -V ${vcf} \
+   -O ${vcf.baseName}.maf \
+   --output-file-format MAF \
+   --data-sources-path /var/spool/mail/GATK_functotator_files/funcotator_dataSources.v1.7.20200521g \
+   --ref-version hg38
+  """
+}
+
+process maf_header2 {
+  storeDir "$baseDir/output/VCF_collect/merge_vcf/functotator"
+  input:
+  file maf from header2_ch
+  output:
+  file "${maf.baseName}_noheader.maf"
+  script:
+  """
+  awk '!/\\#/' ${maf} > ${maf.baseName}_noheader.maf
   """
 }

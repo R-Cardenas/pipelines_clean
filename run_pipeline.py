@@ -111,7 +111,7 @@ else:
 ## You need to put in WGS
 
 if data['samples'].lower() == 'dna-exome' and data['variant'] == 'germline':
-    variant_nf = "nextflow run freebayes_individual.nf & nextflow run haplotypecaller_individual.nf"
+    variant_nf = "nextflow run freebayes_individual.nf -c DNAseq/Exome/cgpmap/cgpmap_hg38.config & nextflow run haplotypecaller_individual.nf -c DNAseq/Exome/cgpmap/cgpmap_hg38.config"
     cmd1 = "cp DNAseq/Exome/germline/freebayes/freebayes_individual.nf ."
     cmd2 = "cp DNAseq/Exome/germline/gatk/haplotypecaller_individual.nf ."
     p = subprocess.run(cmd1, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
@@ -120,7 +120,7 @@ if data['samples'].lower() == 'dna-exome' and data['variant'] == 'germline':
     print(p)
 
 elif data['samples'].lower() == 'dna-exome' and data['variant'] == 'somatic':
-    variant_nf = "nextflow run cgpwxs_v0.1.nf & nextflow run mutect2_individual.nf"
+    variant_nf = "nextflow run cgpwxs_v0.1.nf -c DNAseq/Exome/cgpmap/cgpmap_hg38.config & nextflow run mutect2_individual.nf -c DNAseq/Exome/cgpmap/cgpmap_hg38.config"
     cmd1 = "cp DNAseq/Exome/somatic/cgpwxs_v0.1.nf ."
     cmd2 = "cp DNAseq/Exome/somatic/mutect2_individual.nf ."
     p = subprocess.run(cmd1, check=True, stdout=subprocess.PIPE, universal_newlines=True, shell=True)

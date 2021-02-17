@@ -288,11 +288,8 @@ process verifybamid{
 	file bam from bam11_ch
 	file idx from index_3ch.collect()
 	output:
-	file "*.depthRG"
-	file "*.depthSM"
-	file "*.log"
-	file "*.selfRG"
-	file "*.selfSM"
+	file "${bam.simpleName}.log"
+	file "${bam.simpleName}.selfSM" into con_ch
 	script:
 	"""
 	verifyBamID --vcf $verifybamid \
@@ -302,7 +299,7 @@ process verifybamid{
 	--precise \
 	--verbose \
 	--ignoreRG \
-	-ignoreOverlapPair 
+	-ignoreOverlapPair
 
 	rm -fr *.bam
 	"""
@@ -318,7 +315,7 @@ process somalier{
   file bam from bam12_ch.collect()
 	file idx from index_4ch.collect()
   output:
-	file "*.html"
+	file "*.html" into som_ch
   script:
   """
 	python $baseDir/bin/python/PED_file.py --bam '$bam'
@@ -344,6 +341,19 @@ process somalier{
   """
 }
 
+process multiqc{
+	executor 'slurm'
+	storeDir "$baseDir/output/multiqc"
+	input:
+	file somalier from som_ch
+	file con from con_ch.collect()
+	output:
+	file "*.html"
+	script:
+	"""
+	multiqc $baseDir
+	"""
+}
 
 
 workflow.onComplete {

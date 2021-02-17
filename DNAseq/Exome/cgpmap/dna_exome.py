@@ -15,6 +15,13 @@ import subprocess
 bait = data['bait_file']
 target = data['target_file']
 
+# This will remove the first backslash, it doesnt work in pipeline
+# Needs to be within the github repo (pipelines_clean)
+if bait.startswith('/'):
+    bait = bait[1:]
+if target.startswith('/'):
+    target = target[1:]
+
 print("Checking for bed files located at: \n ")
 print(bait + '\n' + target)
 # check file location of files

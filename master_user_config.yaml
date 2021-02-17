@@ -15,7 +15,7 @@
 
 # INFO: If multiple inputs required seperate by a single space e.g. 'freebayes gatk-haplotypecaller'
 
-####################### 
+#######################
 ## USER INPUT - MAIN ##
 #######################
 
@@ -98,6 +98,8 @@ Normal_samples: 'A_1, A_2'
 ##########################
 ### Exome only ########
 ##########################
+# These need to be in the pipeline_clean folder.
+# Give a relative path from pipelines_clean folder (e.g. /bed/bait.bed)
 
 # What is filename for the bait bed file?
 
