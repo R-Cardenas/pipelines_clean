@@ -99,8 +99,8 @@ kraken \
 --preload \
 --db /var/spool/kraken​​ \
 --threads 10 --fastq-input \
- --gzip-compressed ${f1_pair}​​ \
- --output ${f1_pair.simpleName}.unpair.kraken
+--gzip-compressed ${f1_pair}​​ \
+--output ${f1_pair.simpleName}.unpair.kraken
 
 #paired
 
