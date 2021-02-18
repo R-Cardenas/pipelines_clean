@@ -10,6 +10,7 @@ bam_ch = Channel .fromPath( params.bam )
 
 process bam_filter {
   storeDir "$baseDir/output/bam_filter"
+  executor 'slurm'
   input:
   file bam from bam_ch
   output:
@@ -24,6 +25,7 @@ process bam_filter {
 
 process trimmomatic {
   storeDir "$baseDir/output/trimmomatic"
+  executor 'slurm'
   input:
   file fq1 from fq1_ch
   file fq2 from fq2_ch
@@ -53,8 +55,8 @@ process bbduk {
   file fq22 from fq2pair_ch
   output:
   file "${fq1.simpleName}.unpaired.cat.bbduk.fastq" into f1unpair_ch
-  file "${fq11.simpleName}.out.R1" into f1pair_ch
-  file "${fq11.simpleName}.out.R2" into f2pair_ch
+  file "${fq11.simpleName}.out.R1.fastq" into f1pair_ch
+  file "${fq11.simpleName}.out.R2.fastq" into f2pair_ch
   script:
   """
   cat ${fq1} ${fq2} > ${fq1.simpleName}_unpaired_cat.fastq
@@ -68,14 +70,13 @@ process bbduk {
 
   # PE bbduk
   bbduk.sh in1=$fq11 in2=$fq22 \
-  out1=${fq11.simpleName}.out.R1 \
-  out2=${fq11.simpleName}.out.R2 \
-  outs=${fq11.simpleName}.out.R3 \
+  out1=${fq11.simpleName}.out.R1.fastq \
+  out2=${fq11.simpleName}.out.R2.fastq \
+  outs=${fq11.simpleName}.out.R3.fastq \
   k=30 \
   -Xmx230g \
   ref=/var/spool/mail/bbduk_db.fa \
   mcf=0.5
-
   """
 }
 
@@ -97,9 +98,9 @@ process kraken_paired {
 #_unpaired
 kraken \
 --preload \
---db /var/spool/kraken​​ \
+--db /var/spool/kraken \
 --threads 10 --fastq-input \
---gzip-compressed ${f1_pair}​​ \
+${f1_unpair} \
 --output ${f1_pair.simpleName}.unpair.kraken
 
 #paired
@@ -109,16 +110,17 @@ kraken --preload \
 --threads 10 \
 --fastq-input \
 --paired \
---gzip-compressed \
-${f1_pair}​​ \
+${f1_pair} \
 ${f2_pair} \
 --output \
 ${f1_pair.simpleName}.pair.kraken​
 
-cat ${f1_pair.simpleName}.pair.kraken​ ${f1_pair.simpleName}.unpair.kraken > ${f1_pair.simpleName}.merge.kraken
+sleep 2m
+
+cat ${f1_pair.simpleName}.pair.kraken ${f1_pair.simpleName}.unpair.kraken > ${f1_pair.simpleName}.merge.kraken
 
 rm -fr *.unpair.kraken *.pair.kraken
-  """
+"""
 }
 
 // kraken threshold on the concatentated files
@@ -135,8 +137,8 @@ process threshold {
   file "${kraken.simpleName}.theshold.kraken​​" into report_ch
   script:
   """
-  kraken-filter --db /var/spool/kraken​​ --threshold 0.2 ${kraken}​​ > ${kraken.simpleName}.theshold.kraken​​
-  """
+  kraken-filter --db /var/spool/kraken --threshold 0.2 ${kraken} > ${kraken.simpleName}.theshold.kraken​​
+   """
 }
 
 //produces readable file

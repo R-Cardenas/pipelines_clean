@@ -105,7 +105,8 @@ process VEP {
   --show_ref_allele \
   --symbol \
   --nearest gene \
-  --verbose
+  --verbose \
+  --vcf
   """
 }
 
@@ -122,8 +123,7 @@ process functotator2 {
   file "${vcf.baseName}.maf" into header_ch
   script:
   """
-  gatk IndexFeatureFile \
-     -I ${vcf}
+  gatk IndexFeatureFile -I ${vcf}
 
   gatk Funcotator \
    -R /var/spool/mail/cgpwgs_ref/GRCh38/core_ref_GRCh38_hla_decoy_ebv/genome.fa \
@@ -262,7 +262,8 @@ process VEP2 {
   --show_ref_allele \
   --symbol \
   --nearest gene \
-  --verbose
+  --verbose \
+  --vcf
   """
 }
 
